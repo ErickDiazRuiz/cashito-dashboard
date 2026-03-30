@@ -613,7 +613,7 @@ function renderKPIs(gastos) {
     <div class="kpi-card">
       <div class="kpi-label">Disponible</div>
       <div class="kpi-value" style="color:${disponible!==null&&disponible<0?'var(--danger)':'var(--accent)'}">${disponible!==null?'€'+disponible.toFixed(2):'—'}</div>
-      <div class="kpi-sub">${disponible!==null&&disponible<0?'<span class="badge badge-red">Excedido</span>':'<span class="badge badge-green">En presupuesto</span>':''}</div>
+      <div class="kpi-sub">${disponible!==null?(disponible<0?'<span class="badge badge-red">Excedido</span>':'<span class="badge badge-green">En presupuesto</span>'):''}</div>
     </div>
     <div class="kpi-card">
       <div class="kpi-label">Gastos fijos / mes</div>
