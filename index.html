@@ -5,418 +5,255 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Cashito Dashboard</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-  /* ── Variables ── */
-  :root {
-    --bg: #f5f4f0;
-    --surface: #ffffff;
-    --surface2: #f0efe9;
-    --border: #e4e2d9;
-    --text: #1a1916;
-    --text2: #6b6860;
-    --text3: #9e9b94;
-    --accent: #2d6a4f;
-    --accent2: #52b788;
-    --accent3: #95d5b2;
-    --danger: #e63946;
-    --warn: #f4a261;
-    --card-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.04);
-    --radius: 16px;
-    --radius-sm: 10px;
-  }
-  [data-theme="dark"] {
-    --bg: #0f0f0e;
-    --surface: #1a1916;
-    --surface2: #242320;
-    --border: #2e2c28;
-    --text: #f0ede4;
-    --text2: #a09d95;
-    --text3: #6b6860;
-    --accent: #52b788;
-    --accent2: #95d5b2;
-    --accent3: #2d6a4f;
-    --card-shadow: 0 1px 3px rgba(0,0,0,0.3), 0 4px 16px rgba(0,0,0,0.2);
-  }
+:root {
+  --bg:#f5f4f0; --surface:#fff; --surface2:#f0efe9; --border:#e4e2d9;
+  --text:#1a1916; --text2:#6b6860; --text3:#9e9b94;
+  --accent:#2d6a4f; --accent2:#52b788; --danger:#e63946; --warn:#f4a261;
+  --shadow:0 1px 3px rgba(0,0,0,.06),0 4px 16px rgba(0,0,0,.04);
+  --r:14px; --r-sm:8px;
+}
+[data-theme=dark]{
+  --bg:#0f0f0e; --surface:#1a1916; --surface2:#222220; --border:#2e2c28;
+  --text:#f0ede4; --text2:#a09d95; --text3:#6b6860;
+  --accent:#52b788; --accent2:#95d5b2;
+  --shadow:0 1px 3px rgba(0,0,0,.3),0 4px 16px rgba(0,0,0,.2);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;transition:background .3s,color .3s}
 
-  * { box-sizing: border-box; margin: 0; padding: 0; }
+/* HEADER */
+.hdr{position:sticky;top:0;z-index:100;background:var(--surface);border-bottom:1px solid var(--border);
+  padding:0 20px;height:52px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.logo{font-size:16px;font-weight:700;letter-spacing:-.5px;color:var(--accent);white-space:nowrap}
+.hdr-center{display:flex;gap:3px;background:var(--surface2);border-radius:var(--r-sm);padding:3px;flex-shrink:0}
+.ptab{padding:4px 12px;border-radius:6px;border:none;font-family:'DM Sans',sans-serif;font-size:12px;
+  font-weight:500;cursor:pointer;background:transparent;color:var(--text2);transition:all .15s;white-space:nowrap}
+.ptab.on{background:var(--surface);color:var(--text);box-shadow:0 1px 3px rgba(0,0,0,.1)}
+.hdr-right{display:flex;align-items:center;gap:8px}
+.icon-btn{width:32px;height:32px;border-radius:50%;border:1px solid var(--border);background:var(--surface2);
+  cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px;transition:background .15s}
+.icon-btn:hover{background:var(--border)}
+.custom-row{display:flex;gap:6px;align-items:center}
+.custom-row input{padding:4px 8px;border-radius:6px;border:1px solid var(--border);background:var(--surface2);
+  color:var(--text);font-family:'DM Mono',monospace;font-size:11px;width:110px}
+.custom-row button{padding:4px 10px;border-radius:6px;border:none;background:var(--accent);color:#fff;
+  font-size:12px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif}
 
-  body {
-    font-family: 'DM Sans', sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    min-height: 100vh;
-    transition: background 0.3s, color 0.3s;
-  }
+/* MAIN */
+.main{padding:20px;max-width:1440px;margin:0 auto}
+.period-lbl{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.8px;font-weight:600;margin-bottom:16px}
 
-  /* ── Header ── */
-  .header {
-    position: sticky; top: 0; z-index: 100;
-    background: var(--surface);
-    border-bottom: 1px solid var(--border);
-    padding: 0 24px;
-    height: 60px;
-    display: flex; align-items: center; justify-content: space-between;
-  }
-  .logo {
-    font-size: 18px; font-weight: 700; letter-spacing: -0.5px;
-    display: flex; align-items: center; gap: 8px;
-  }
-  .logo span { color: var(--accent); }
-  .header-right { display: flex; align-items: center; gap: 12px; }
+/* KPI GRID */
+.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px}
+.kpi{background:var(--surface);border-radius:var(--r);padding:18px 20px;box-shadow:var(--shadow);
+  border:1px solid var(--border);transition:transform .2s}
+.kpi:hover{transform:translateY(-2px)}
+.kpi-lbl{font-size:10px;color:var(--text3);font-weight:600;text-transform:uppercase;letter-spacing:.6px;margin-bottom:8px}
+.kpi-val{font-size:26px;font-weight:700;letter-spacing:-1px;margin-bottom:4px}
+.kpi-sub{font-size:11px;color:var(--text2);display:flex;align-items:center;gap:6px;min-height:18px}
+.pbar{height:3px;background:var(--surface2);border-radius:2px;margin-top:10px;overflow:hidden}
+.pfill{height:100%;border-radius:2px;transition:width .8s cubic-bezier(.4,0,.2,1)}
+.badge{padding:2px 7px;border-radius:20px;font-size:10px;font-weight:600}
+.bg{background:#d8f3dc;color:#1b4332} .br{background:#fde8e8;color:#7f1d1d} .by{background:#fef3c7;color:#78350f}
+[data-theme=dark] .bg{background:#1b4332;color:#95d5b2}
+[data-theme=dark] .br{background:#3b0f0f;color:#fc8181}
+[data-theme=dark] .by{background:#3b2f0f;color:#fcd34d}
 
-  /* Period selector */
-  .period-tabs {
-    display: flex; gap: 2px;
-    background: var(--surface2);
-    border-radius: var(--radius-sm);
-    padding: 3px;
-  }
-  .period-tab {
-    padding: 5px 14px; border-radius: 8px; border: none;
-    font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500;
-    cursor: pointer; background: transparent; color: var(--text2);
-    transition: all 0.2s;
-  }
-  .period-tab.active {
-    background: var(--surface); color: var(--text);
-    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-  }
+/* FIJOS CARD — expandible */
+.fijos-list{margin-top:10px;display:none;flex-direction:column;gap:6px}
+.fijos-list.open{display:flex}
+.fijo-row{display:flex;justify-content:space-between;align-items:center;
+  padding:6px 0;border-bottom:1px solid var(--border);font-size:12px}
+.fijo-row:last-child{border-bottom:none}
+.fijo-name{color:var(--text2)}
+.fijo-amt{font-family:'DM Mono',monospace;font-weight:600;color:var(--text)}
+.fijo-day{font-size:10px;color:var(--text3);margin-top:1px}
+.expand-btn{font-size:10px;color:var(--accent);cursor:pointer;font-weight:600;margin-top:6px;
+  background:none;border:none;font-family:'DM Sans',sans-serif;padding:0;text-align:left}
 
-  /* Theme toggle */
-  .theme-btn {
-    width: 36px; height: 36px; border-radius: 50%;
-    border: 1px solid var(--border);
-    background: var(--surface2); cursor: pointer;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 16px; transition: all 0.2s;
-  }
-  .theme-btn:hover { background: var(--border); }
+/* CHARTS ROW */
+.charts-row{display:grid;grid-template-columns:2fr 1fr;gap:12px;margin-bottom:16px}
+.card{background:var(--surface);border-radius:var(--r);padding:20px;box-shadow:var(--shadow);border:1px solid var(--border)}
+.card-hdr{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px}
+.card-title{font-size:14px;font-weight:600;letter-spacing:-.3px}
+.card-sub{font-size:11px;color:var(--text3);margin-top:2px}
+.legend{display:flex;gap:12px;flex-wrap:wrap}
+.leg-item{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text2)}
+.leg-dot{width:7px;height:7px;border-radius:50%}
 
-  /* Custom date */
-  .date-inputs {
-    display: flex; gap: 6px; align-items: center;
-  }
-  .date-inputs input {
-    padding: 5px 10px; border-radius: 8px;
-    border: 1px solid var(--border);
-    background: var(--surface2); color: var(--text);
-    font-family: 'DM Mono', monospace; font-size: 12px;
-    width: 120px;
-  }
-  .date-inputs button {
-    padding: 5px 12px; border-radius: 8px;
-    border: none; background: var(--accent); color: white;
-    font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 600;
-    cursor: pointer;
-  }
+/* BOTTOM ROW */
+.bot-row{display:grid;grid-template-columns:1fr 1.6fr;gap:12px}
 
-  /* ── Main layout ── */
-  .main { padding: 24px; max-width: 1400px; margin: 0 auto; }
+/* CAT BARS */
+.cat-list{display:flex;flex-direction:column;gap:12px}
+.cat-row .top{display:flex;justify-content:space-between;margin-bottom:4px}
+.cat-name{font-size:12px;font-weight:500}
+.cat-amt{font-size:12px;font-weight:600;font-family:'DM Mono',monospace}
+.cat-bar{height:5px;background:var(--surface2);border-radius:3px;overflow:hidden;cursor:pointer}
+.cat-fill{height:100%;border-radius:3px;transition:width 1s cubic-bezier(.4,0,.2,1)}
+.cat-bar:hover .cat-fill{filter:brightness(1.2)}
 
-  /* ── Period label ── */
-  .period-label {
-    font-size: 13px; color: var(--text3); margin-bottom: 20px;
-    font-weight: 500; letter-spacing: 0.5px; text-transform: uppercase;
-  }
+/* TRANSACTIONS */
+.tx-filters{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.filt-btn{padding:3px 10px;border-radius:20px;border:1px solid var(--border);background:transparent;
+  font-family:'DM Sans',sans-serif;font-size:11px;font-weight:500;color:var(--text2);cursor:pointer;transition:all .15s}
+.filt-btn.on{background:var(--accent);color:#fff;border-color:var(--accent)}
+.tx-table{overflow-x:auto}
+table{width:100%;border-collapse:collapse}
+th{text-align:left;padding:6px 10px;font-size:10px;font-weight:600;color:var(--text3);
+  text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid var(--border)}
+td{padding:8px 10px;font-size:12px;border-bottom:1px solid var(--border)}
+tr:last-child td{border-bottom:none}
+tr.tx-row{cursor:pointer;transition:background .1s}
+tr.tx-row:hover td{background:var(--surface2)}
+.mono{font-family:'DM Mono',monospace;font-weight:600;color:var(--danger)}
+.cpill{display:inline-flex;align-items:center;gap:3px;padding:1px 6px;border-radius:20px;
+  font-size:10px;background:var(--surface2);color:var(--text2)}
+.tipo{display:inline-block;padding:1px 5px;border-radius:3px;font-size:10px;font-weight:600}
+.tn{background:#d8f3dc;color:#1b4332} .tg{background:#fff3e0;color:#7c4a03}
+[data-theme=dark] .tn{background:#1b4332;color:#95d5b2}
+[data-theme=dark] .tg{background:#3b2a0f;color:#fcd34d}
 
-  /* ── KPI Cards ── */
-  .kpi-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 16px; margin-bottom: 24px;
-  }
-  .kpi-card {
-    background: var(--surface); border-radius: var(--radius);
-    padding: 20px 22px; box-shadow: var(--card-shadow);
-    border: 1px solid var(--border);
-    transition: transform 0.2s, box-shadow 0.2s;
-  }
-  .kpi-card:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.08); }
-  .kpi-label { font-size: 12px; color: var(--text3); font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px; }
-  .kpi-value { font-size: 28px; font-weight: 700; letter-spacing: -1px; margin-bottom: 6px; }
-  .kpi-sub { font-size: 12px; color: var(--text2); display: flex; align-items: center; gap: 4px; }
-  .badge { padding: 2px 8px; border-radius: 20px; font-size: 11px; font-weight: 600; }
-  .badge-green { background: #d8f3dc; color: #1b4332; }
-  .badge-red { background: #fde8e8; color: #7f1d1d; }
-  .badge-yellow { background: #fef3c7; color: #78350f; }
-  [data-theme="dark"] .badge-green { background: #1b4332; color: #95d5b2; }
-  [data-theme="dark"] .badge-red { background: #3b0f0f; color: #fc8181; }
-  [data-theme="dark"] .badge-yellow { background: #3b2f0f; color: #fcd34d; }
+/* TX DETAIL PANEL */
+.tx-detail{display:none;position:fixed;right:0;top:0;bottom:0;width:320px;
+  background:var(--surface);border-left:1px solid var(--border);padding:24px;
+  z-index:200;overflow-y:auto;box-shadow:-4px 0 20px rgba(0,0,0,.1)}
+.tx-detail.open{display:block}
+.det-close{position:absolute;top:16px;right:16px;background:var(--surface2);border:none;
+  border-radius:50%;width:28px;height:28px;cursor:pointer;font-size:14px;color:var(--text2)}
+.det-field{margin-bottom:14px}
+.det-lbl{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;font-weight:600;margin-bottom:3px}
+.det-val{font-size:14px;font-weight:500}
+.det-monto{font-size:28px;font-weight:700;letter-spacing:-1px;color:var(--danger);margin:12px 0}
 
-  /* Progress bar */
-  .progress-bar { height: 4px; background: var(--surface2); border-radius: 2px; margin-top: 10px; overflow: hidden; }
-  .progress-fill { height: 100%; border-radius: 2px; transition: width 0.8s cubic-bezier(0.4,0,0.2,1); }
+/* OVERLAY */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;
+  align-items:center;justify-content:center;z-index:300}
+.overlay.open{display:flex}
+.modal{background:var(--surface);border-radius:var(--r);padding:28px;width:90%;max-width:400px;
+  box-shadow:0 20px 60px rgba(0,0,0,.2)}
+.modal h2{font-size:17px;font-weight:700;margin-bottom:4px}
+.modal p{font-size:12px;color:var(--text2);margin-bottom:18px}
+.fg{margin-bottom:14px}
+.fg label{display:block;font-size:10px;font-weight:600;color:var(--text2);margin-bottom:5px;
+  text-transform:uppercase;letter-spacing:.5px}
+.fg input{width:100%;padding:9px 12px;border-radius:8px;border:1px solid var(--border);
+  background:var(--surface2);color:var(--text);font-family:'DM Mono',monospace;font-size:12px}
+.fg input:focus{outline:2px solid var(--accent);border-color:transparent}
+.btn-p{width:100%;padding:11px;border-radius:8px;border:none;background:var(--accent);color:#fff;
+  font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer;margin-top:4px}
+.btn-s{width:100%;padding:9px;border-radius:8px;border:1px solid var(--border);background:transparent;
+  color:var(--text2);font-family:'DM Sans',sans-serif;font-size:12px;cursor:pointer;margin-top:6px}
 
-  /* ── Charts row ── */
-  .charts-row {
-    display: grid;
-    grid-template-columns: 2fr 1fr;
-    gap: 16px; margin-bottom: 24px;
-  }
-  .card {
-    background: var(--surface); border-radius: var(--radius);
-    padding: 22px; box-shadow: var(--card-shadow);
-    border: 1px solid var(--border);
-  }
-  .card-header {
-    display: flex; align-items: center; justify-content: space-between;
-    margin-bottom: 20px;
-  }
-  .card-title { font-size: 15px; font-weight: 600; letter-spacing: -0.3px; }
-  .card-subtitle { font-size: 12px; color: var(--text3); margin-top: 2px; }
+/* LOADING */
+.spin-wrap{display:flex;flex-direction:column;align-items:center;justify-content:center;height:180px;gap:10px;color:var(--text3);font-size:13px}
+.spin{width:24px;height:24px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:sp .7s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+.empty{text-align:center;padding:32px;color:var(--text3);font-size:13px}
 
-  /* Legend */
-  .legend { display: flex; gap: 16px; flex-wrap: wrap; }
-  .legend-item { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--text2); cursor: pointer; }
-  .legend-dot { width: 8px; height: 8px; border-radius: 50%; }
-
-  .chart-container { position: relative; }
-
-  /* ── Bottom row ── */
-  .bottom-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 16px;
-  }
-
-  /* ── Table ── */
-  .table-wrap { overflow-x: auto; }
-  table { width: 100%; border-collapse: collapse; }
-  th {
-    text-align: left; padding: 8px 12px;
-    font-size: 11px; font-weight: 600; color: var(--text3);
-    text-transform: uppercase; letter-spacing: 0.5px;
-    border-bottom: 1px solid var(--border);
-  }
-  td { padding: 10px 12px; font-size: 13px; border-bottom: 1px solid var(--border); }
-  tr:last-child td { border-bottom: none; }
-  tr:hover td { background: var(--surface2); }
-  .cat-pill {
-    display: inline-flex; align-items: center; gap: 4px;
-    padding: 2px 8px; border-radius: 20px;
-    font-size: 11px; font-weight: 500;
-    background: var(--surface2); color: var(--text2);
-  }
-  .amount-neg { color: var(--danger); font-weight: 600; font-family: 'DM Mono', monospace; }
-  .tipo-pill {
-    display: inline-block; padding: 1px 6px; border-radius: 4px;
-    font-size: 10px; font-weight: 600;
-  }
-  .tipo-need { background: #d8f3dc; color: #1b4332; }
-  .tipo-want { background: #fff3e0; color: #7c4a03; }
-  [data-theme="dark"] .tipo-need { background: #1b4332; color: #95d5b2; }
-  [data-theme="dark"] .tipo-want { background: #3b2a0f; color: #fcd34d; }
-
-  /* ── Category bars ── */
-  .cat-list { display: flex; flex-direction: column; gap: 14px; }
-  .cat-row { display: flex; flex-direction: column; gap: 5px; }
-  .cat-row-top { display: flex; justify-content: space-between; align-items: center; }
-  .cat-name { font-size: 13px; font-weight: 500; }
-  .cat-amount { font-size: 13px; font-weight: 600; font-family: 'DM Mono', monospace; }
-  .cat-bar { height: 6px; background: var(--surface2); border-radius: 3px; overflow: hidden; }
-  .cat-fill { height: 100%; border-radius: 3px; transition: width 1s cubic-bezier(0.4,0,0.2,1); }
-
-  /* ── Loading ── */
-  .loading {
-    display: flex; align-items: center; justify-content: center;
-    height: 200px; color: var(--text3); font-size: 14px;
-    flex-direction: column; gap: 12px;
-  }
-  .spinner {
-    width: 28px; height: 28px; border: 2px solid var(--border);
-    border-top-color: var(--accent); border-radius: 50%;
-    animation: spin 0.8s linear infinite;
-  }
-  @keyframes spin { to { transform: rotate(360deg); } }
-
-  /* ── Empty state ── */
-  .empty { text-align: center; padding: 40px; color: var(--text3); font-size: 14px; }
-
-  /* ── Config overlay ── */
-  .config-overlay {
-    position: fixed; inset: 0; background: rgba(0,0,0,0.5);
-    display: none; align-items: center; justify-content: center; z-index: 200;
-  }
-  .config-overlay.open { display: flex; }
-  .config-modal {
-    background: var(--surface); border-radius: var(--radius);
-    padding: 28px; width: 90%; max-width: 420px;
-    box-shadow: 0 20px 60px rgba(0,0,0,0.2);
-  }
-  .config-modal h2 { font-size: 18px; font-weight: 700; margin-bottom: 6px; }
-  .config-modal p { font-size: 13px; color: var(--text2); margin-bottom: 20px; }
-  .form-group { margin-bottom: 16px; }
-  .form-group label { display: block; font-size: 12px; font-weight: 600; color: var(--text2); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
-  .form-group input {
-    width: 100%; padding: 10px 14px; border-radius: 10px;
-    border: 1px solid var(--border); background: var(--surface2);
-    color: var(--text); font-family: 'DM Mono', monospace; font-size: 13px;
-  }
-  .form-group input:focus { outline: 2px solid var(--accent); border-color: transparent; }
-  .btn-primary {
-    width: 100%; padding: 12px; border-radius: 10px; border: none;
-    background: var(--accent); color: white; font-family: 'DM Sans', sans-serif;
-    font-size: 14px; font-weight: 600; cursor: pointer; transition: opacity 0.2s;
-  }
-  .btn-primary:hover { opacity: 0.9; }
-  .btn-secondary {
-    width: 100%; padding: 10px; border-radius: 10px;
-    border: 1px solid var(--border); background: transparent;
-    color: var(--text2); font-family: 'DM Sans', sans-serif;
-    font-size: 13px; cursor: pointer; margin-top: 8px;
-  }
-
-  /* ── Responsive ── */
-  @media (max-width: 900px) {
-    .kpi-grid { grid-template-columns: repeat(2, 1fr); }
-    .charts-row { grid-template-columns: 1fr; }
-    .bottom-row { grid-template-columns: 1fr; }
-    .period-tabs { display: none; }
-    .mobile-period { display: flex !important; }
-  }
-  @media (max-width: 600px) {
-    .main { padding: 16px; }
-    .kpi-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
-    .kpi-value { font-size: 22px; }
-    .header { padding: 0 16px; }
-    .date-inputs { display: none; }
-  }
-  .mobile-period {
-    display: none; width: 100%; margin-bottom: 16px;
-    gap: 8px; overflow-x: auto; padding-bottom: 4px;
-  }
-  .mobile-period .period-tab {
-    white-space: nowrap; background: var(--surface);
-    border: 1px solid var(--border); border-radius: 20px;
-    padding: 6px 16px;
-  }
-  .mobile-period .period-tab.active {
-    background: var(--accent); color: white; border-color: var(--accent);
-  }
+/* RESPONSIVE */
+@media(max-width:1000px){.charts-row{grid-template-columns:1fr}.bot-row{grid-template-columns:1fr}}
+@media(max-width:700px){
+  .kpi-grid{grid-template-columns:repeat(2,1fr)}
+  .hdr-center{display:none}
+  .mob-scroll{display:flex!important}
+  .tx-detail{width:100%;border-left:none;border-top:1px solid var(--border)}
+}
+.mob-scroll{display:none;overflow-x:auto;gap:6px;padding-bottom:4px;margin-bottom:14px}
+.mob-scroll .ptab{white-space:nowrap;background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:5px 14px}
+.mob-scroll .ptab.on{background:var(--accent);color:#fff;border-color:var(--accent)}
 </style>
 </head>
 <body>
 
-<!-- Config overlay -->
-<div class="config-overlay" id="configOverlay">
-  <div class="config-modal">
+<!-- Config modal -->
+<div class="overlay" id="cfgModal">
+  <div class="modal">
     <h2>⚙️ Configurar Cashito</h2>
-    <p>Ingresa tus credenciales de Supabase para conectar el dashboard con tus datos.</p>
-    <div class="form-group">
-      <label>Supabase URL</label>
-      <input type="text" id="cfgUrl" placeholder="https://xxxx.supabase.co">
-    </div>
-    <div class="form-group">
-      <label>Anon Key</label>
-      <input type="text" id="cfgKey" placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6...">
-    </div>
-    <button class="btn-primary" onclick="saveConfig()">Conectar</button>
-    <button class="btn-secondary" onclick="loadDemo()">Ver demo con datos de ejemplo</button>
+    <p>Ingresa tus credenciales de Supabase. Se guardan en tu navegador.</p>
+    <div class="fg"><label>Supabase URL</label><input id="cfgUrl" placeholder="https://xxxx.supabase.co"></div>
+    <div class="fg"><label>Anon Key</label><input id="cfgKey" placeholder="eyJhbGci..."></div>
+    <button class="btn-p" onclick="saveConfig()">Conectar</button>
+    <button class="btn-s" onclick="loadDemo()">Ver demo con datos de ejemplo</button>
   </div>
 </div>
 
+<!-- TX Detail panel -->
+<div class="tx-detail" id="txDetail">
+  <button class="det-close" onclick="closeDet()">✕</button>
+  <div id="detContent"></div>
+</div>
+
 <!-- Header -->
-<header class="header">
-  <div class="logo">💰 <span>Cashito</span></div>
-  <div class="header-right">
-    <!-- Desktop period tabs -->
-    <div class="period-tabs" id="periodTabs">
-      <button class="period-tab active" onclick="setPeriod('month')">Este mes</button>
-      <button class="period-tab" onclick="setPeriod('last_month')">Mes anterior</button>
-      <button class="period-tab" onclick="setPeriod('year')">Este año</button>
-      <button class="period-tab" onclick="setPeriod('custom')">Custom</button>
+<header class="hdr">
+  <div class="logo">💰 Cashito</div>
+  <div class="hdr-center" id="periodTabs">
+    <button class="ptab on" onclick="setPeriod('month',this)">Este mes</button>
+    <button class="ptab" onclick="setPeriod('last_month',this)">Mes anterior</button>
+    <button class="ptab" onclick="setPeriod('year',this)">Este año</button>
+    <button class="ptab" onclick="setPeriod('custom',this)">Custom</button>
+  </div>
+  <div class="hdr-right">
+    <div class="custom-row" id="customRow" style="display:none">
+      <input type="date" id="dtFrom">
+      <span style="color:var(--text3);font-size:11px">→</span>
+      <input type="date" id="dtTo">
+      <button onclick="applyCustom()">OK</button>
     </div>
-    <!-- Custom range -->
-    <div class="date-inputs" id="customRange" style="display:none">
-      <input type="date" id="dateFrom">
-      <span style="color:var(--text3); font-size:12px">→</span>
-      <input type="date" id="dateTo">
-      <button onclick="applyCustom()">Aplicar</button>
-    </div>
-    <button class="theme-btn" onclick="toggleTheme()" id="themeBtn">🌙</button>
-    <button class="theme-btn" onclick="document.getElementById('configOverlay').classList.add('open')" title="Configurar">⚙️</button>
+    <button class="icon-btn" id="themeBtn" onclick="toggleTheme()">🌙</button>
+    <button class="icon-btn" onclick="document.getElementById('cfgModal').classList.add('open')">⚙️</button>
   </div>
 </header>
 
 <main class="main">
-  <!-- Mobile period selector -->
-  <div class="mobile-period" id="mobilePeriod">
-    <button class="period-tab active" onclick="setPeriod('month')">Este mes</button>
-    <button class="period-tab" onclick="setPeriod('last_month')">Mes anterior</button>
-    <button class="period-tab" onclick="setPeriod('year')">Este año</button>
-    <button class="period-tab" onclick="setPeriod('custom')">Custom</button>
+  <!-- Mobile period -->
+  <div class="mob-scroll" id="mobPeriod">
+    <button class="ptab on" onclick="setPeriodMob('month',this)">Este mes</button>
+    <button class="ptab" onclick="setPeriodMob('last_month',this)">Mes anterior</button>
+    <button class="ptab" onclick="setPeriodMob('year',this)">Este año</button>
+    <button class="ptab" onclick="setPeriodMob('custom',this)">Custom</button>
   </div>
 
-  <div class="period-label" id="periodLabel">Cargando...</div>
+  <div class="period-lbl" id="pLabel">Cargando...</div>
 
-  <!-- KPI Cards -->
+  <!-- KPIs -->
   <div class="kpi-grid" id="kpiGrid">
-    <div class="kpi-card"><div class="loading"><div class="spinner"></div></div></div>
-    <div class="kpi-card"><div class="loading"><div class="spinner"></div></div></div>
-    <div class="kpi-card"><div class="loading"><div class="spinner"></div></div></div>
-    <div class="kpi-card"><div class="loading"><div class="spinner"></div></div></div>
+    <div class="kpi"><div class="spin-wrap"><div class="spin"></div></div></div>
+    <div class="kpi"><div class="spin-wrap"><div class="spin"></div></div></div>
+    <div class="kpi"><div class="spin-wrap"><div class="spin"></div></div></div>
+    <div class="kpi"><div class="spin-wrap"><div class="spin"></div></div></div>
   </div>
 
   <!-- Charts -->
   <div class="charts-row">
     <div class="card">
-      <div class="card-header">
-        <div>
-          <div class="card-title">Evolución del gasto</div>
-          <div class="card-subtitle">Acumulado, proyección y presupuesto</div>
-        </div>
-        <div class="legend" id="lineLegend"></div>
+      <div class="card-hdr">
+        <div><div class="card-title">Evolución del gasto</div><div class="card-sub">Acumulado, proyección y presupuesto</div></div>
+        <div class="legend" id="lineLeg"></div>
       </div>
-      <div class="chart-container" style="height:240px">
-        <canvas id="lineChart"></canvas>
-      </div>
+      <div style="position:relative;height:230px"><canvas id="lineChart"></canvas></div>
     </div>
     <div class="card">
-      <div class="card-header">
-        <div>
-          <div class="card-title">Distribución</div>
-          <div class="card-subtitle">Por categoría</div>
-        </div>
-      </div>
-      <div class="chart-container" style="height:220px">
-        <canvas id="donutChart"></canvas>
-      </div>
+      <div class="card-hdr"><div><div class="card-title">Distribución</div><div class="card-sub">Por categoría — click para filtrar</div></div></div>
+      <div style="position:relative;height:210px"><canvas id="donut"></canvas></div>
     </div>
   </div>
 
   <!-- Bottom -->
-  <div class="bottom-row">
+  <div class="bot-row">
     <div class="card">
-      <div class="card-header">
-        <div>
-          <div class="card-title">Por categoría</div>
-          <div class="card-subtitle" id="catSubtitle">—</div>
-        </div>
-      </div>
-      <div class="cat-list" id="catList">
-        <div class="loading"><div class="spinner"></div></div>
-      </div>
+      <div class="card-hdr"><div><div class="card-title">Por categoría</div><div class="card-sub" id="catSub">—</div></div></div>
+      <div class="cat-list" id="catList"><div class="spin-wrap"><div class="spin"></div></div></div>
     </div>
     <div class="card">
-      <div class="card-header">
-        <div>
-          <div class="card-title">Transacciones</div>
-          <div class="card-subtitle" id="txSubtitle">—</div>
-        </div>
-      </div>
-      <div class="table-wrap">
+      <div class="card-hdr"><div><div class="card-title">Transacciones</div><div class="card-sub" id="txSub">—</div></div></div>
+      <div class="tx-filters" id="txFilters"></div>
+      <div class="tx-table">
         <table>
-          <thead>
-            <tr>
-              <th>Fecha</th>
-              <th>Detalle</th>
-              <th>Monto</th>
-            </tr>
-          </thead>
-          <tbody id="txBody">
-            <tr><td colspan="3"><div class="loading"><div class="spinner"></div></div></td></tr>
-          </tbody>
+          <thead><tr><th>Fecha</th><th>Detalle</th><th>Monto</th></tr></thead>
+          <tbody id="txBody"><tr><td colspan="3"><div class="spin-wrap"><div class="spin"></div></div></td></tr></tbody>
         </table>
       </div>
     </div>
@@ -424,481 +261,439 @@
 </main>
 
 <script>
-// ── Config ──────────────────────────────────────────────────────────────────
-let SUPABASE_URL = localStorage.getItem('cashito_url') || '';
-let SUPABASE_KEY = localStorage.getItem('cashito_key') || '';
+// ── State ──────────────────────────────────────────────────────────────────
+let SB_URL = localStorage.getItem('c_url')||'';
+let SB_KEY = localStorage.getItem('c_key')||'';
+let period = 'month';
+let cFrom=null, cTo=null;
+let gastos=[], fijos=[], budget=null;
+let lineInst=null, donutInst=null;
+let activeCat=null, activeFiltBtn=null;
 
-const CAT_COLORS = [
-  '#2d6a4f','#52b788','#74c69d','#95d5b2','#b7e4c7',
-  '#f4a261','#e76f51','#e9c46a','#264653','#2a9d8f',
-  '#457b9d','#a8dadc'
-];
+const COLORS=['#2d6a4f','#52b788','#74c69d','#f4a261','#e76f51','#e9c46a','#264653','#2a9d8f','#457b9d','#a8dadc','#e63946','#6d6875'];
 
-let currentPeriod = 'month';
-let customFrom = null, customTo = null;
-let allGastos = [], allFijos = [], budget = null;
-let lineChartInst = null, donutChartInst = null;
-let selectedCat = null;
+// ── Init ──────────────────────────────────────────────────────────────────
+window.addEventListener('load',()=>{
+  const t=localStorage.getItem('c_theme');
+  if(t==='dark'){document.documentElement.setAttribute('data-theme','dark');document.getElementById('themeBtn').textContent='☀️';}
+  if(!SB_URL||!SB_KEY) document.getElementById('cfgModal').classList.add('open');
+  else loadAll();
+});
 
-// ── Init ─────────────────────────────────────────────────────────────────────
-window.onload = () => {
-  const saved = localStorage.getItem('cashito_theme');
-  if (saved === 'dark') { document.documentElement.setAttribute('data-theme','dark'); document.getElementById('themeBtn').textContent = '☀️'; }
-
-  if (!SUPABASE_URL || !SUPABASE_KEY) {
-    document.getElementById('configOverlay').classList.add('open');
-  } else {
-    loadAll();
-  }
-};
-
-function saveConfig() {
-  SUPABASE_URL = document.getElementById('cfgUrl').value.trim();
-  SUPABASE_KEY = document.getElementById('cfgKey').value.trim();
-  if (!SUPABASE_URL || !SUPABASE_KEY) return alert('Completa los dos campos.');
-  localStorage.setItem('cashito_url', SUPABASE_URL);
-  localStorage.setItem('cashito_key', SUPABASE_KEY);
-  document.getElementById('configOverlay').classList.remove('open');
+function saveConfig(){
+  SB_URL=document.getElementById('cfgUrl').value.trim();
+  SB_KEY=document.getElementById('cfgKey').value.trim();
+  if(!SB_URL||!SB_KEY){alert('Completa los dos campos.');return;}
+  localStorage.setItem('c_url',SB_URL); localStorage.setItem('c_key',SB_KEY);
+  document.getElementById('cfgModal').classList.remove('open');
   loadAll();
 }
 
-function loadDemo() {
-  document.getElementById('configOverlay').classList.remove('open');
-  const now = new Date();
-  const year = now.getFullYear(), month = now.getMonth();
-  allGastos = generateDemoData(year, month);
-  budget = 1500;
-  allFijos = [{nombre:'Alquiler',monto:600,dia_cobro:1,activo:true},{nombre:'Internet',monto:35,dia_cobro:5,activo:true},{nombre:'Netflix',monto:15,dia_cobro:15,activo:true}];
+// ── Demo data ──────────────────────────────────────────────────────────────
+function loadDemo(){
+  document.getElementById('cfgModal').classList.remove('open');
+  const now=new Date(), y=now.getFullYear(), m=now.getMonth();
+  gastos=[...genMonth(y,m),...genMonth(y,m-1)];
+  budget=1500;
+  fijos=[{id:1,nombre:'Alquiler',monto:800,dia_cobro:1,activo:true,categoria:'🏠 Hogar',subcategoria:'Alquiler'},
+         {id:2,nombre:'Internet',monto:35,dia_cobro:5,activo:true,categoria:'🏠 Hogar',subcategoria:'Internet'},
+         {id:3,nombre:'Netflix',monto:15,dia_cobro:15,activo:true,categoria:'🎮 Ocio',subcategoria:'Streaming'},
+         {id:4,nombre:'Gym',monto:29,dia_cobro:20,activo:true,categoria:'💊 Salud',subcategoria:'Gimnasio'}];
   render();
 }
-
-function generateDemoData(year, month) {
-  const cats = [
-    {cat:'🍔 Alimentación', subs:['Supermercado','Restaurante','Delivery'], items:['Pollo','Leche','Pan','Yogurt']},
-    {cat:'🚗 Transporte', subs:['Metro/Bus','Uber/Taxi']},
-    {cat:'🏠 Hogar', subs:['Luz/Agua/Gas','Internet']},
-    {cat:'🎮 Ocio', subs:['Streaming','Cine/Teatro']},
-    {cat:'💊 Salud', subs:['Farmacia','Gimnasio']},
-    {cat:'📦 Otros', subs:['Libre']},
+function genMonth(y,m){
+  if(m<0){m=11;y--;}
+  const cats=[
+    {c:'🍔 Alimentación',subs:['Supermercado','Restaurante','Delivery'],items:['Pollo','Leche','Yogurt','Pan','Cereal']},
+    {c:'🚗 Transporte',subs:['Metro/Bus','Uber/Taxi']},
+    {c:'🏠 Hogar',subs:['Luz/Agua/Gas']},
+    {c:'🎮 Ocio',subs:['Streaming','Cine/Teatro']},
+    {c:'💊 Salud',subs:['Farmacia']},
+    {c:'📦 Otros',subs:['Libre']},
   ];
-  const gastos = [];
-  const daysInMonth = new Date(year, month+1, 0).getDate();
-  const today = new Date().getDate();
-  const maxDay = (year === new Date().getFullYear() && month === new Date().getMonth()) ? today : daysInMonth;
-  for (let d = 1; d <= maxDay; d++) {
-    const count = Math.floor(Math.random()*3) + 1;
-    for (let i = 0; i < count; i++) {
-      const c = cats[Math.floor(Math.random()*cats.length)];
-      const sub = c.subs[Math.floor(Math.random()*c.subs.length)];
-      const monto = (Math.random()*50+2).toFixed(2);
-      const fecha = `${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}T${String(Math.floor(Math.random()*12)+8).padStart(2,'0')}:${String(Math.floor(Math.random()*60)).padStart(2,'0')}:00`;
-      const g = {id:gastos.length+1, fecha, categoria:c.cat, subcategoria:sub, monto, nota:null, item_nombre:null, item_tipo:null};
-      if (sub === 'Supermercado' && c.items) {
-        g.item_nombre = c.items[Math.floor(Math.random()*c.items.length)];
-        g.item_tipo = Math.random() > 0.3 ? 'necesidad' : 'gusto';
+  const days=new Date(y,m+1,0).getDate();
+  const res=[];
+  for(let d=1;d<=days;d++){
+    const n=Math.floor(Math.random()*3)+1;
+    for(let i=0;i<n;i++){
+      const ct=cats[Math.floor(Math.random()*cats.length)];
+      const sub=ct.subs[Math.floor(Math.random()*ct.subs.length)];
+      const mt=(Math.random()*60+2).toFixed(2);
+      const hh=String(Math.floor(Math.random()*14)+7).padStart(2,'0');
+      const mm2=String(Math.floor(Math.random()*60)).padStart(2,'0');
+      const fecha=`${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}T${hh}:${mm2}:00`;
+      const g={id:res.length+1,fecha,categoria:ct.c,subcategoria:sub,monto:mt,nota:null,item_nombre:null,item_tipo:null};
+      if(sub==='Supermercado'&&ct.items){
+        g.item_nombre=ct.items[Math.floor(Math.random()*ct.items.length)];
+        g.item_tipo=Math.random()>.35?'necesidad':'gusto';
       }
-      gastos.push(g);
+      res.push(g);
     }
   }
-  return gastos;
+  return res;
 }
 
-// ── Fetch ─────────────────────────────────────────────────────────────────────
-async function sbFetch(table, params = {}) {
-  const url = new URL(`${SUPABASE_URL}/rest/v1/${table}`);
-  Object.entries(params).forEach(([k,v]) => url.searchParams.append(k,v));
-  const r = await fetch(url, {headers:{'apikey':SUPABASE_KEY,'Authorization':`Bearer ${SUPABASE_KEY}`}});
-  if (!r.ok) throw new Error(await r.text());
+// ── Fetch ──────────────────────────────────────────────────────────────────
+async function sb(table,params={}){
+  const u=new URL(`${SB_URL}/rest/v1/${table}`);
+  Object.entries(params).forEach(([k,v])=>u.searchParams.append(k,v));
+  const r=await fetch(u,{headers:{apikey:SB_KEY,Authorization:`Bearer ${SB_KEY}`}});
+  if(!r.ok)throw new Error(await r.text());
   return r.json();
 }
-
-async function loadAll() {
-  try {
-    const now = new Date();
-    const year = now.getFullYear();
-    // Load last 12 months of data for trend chart
-    const from12 = `${year-1}-${String(now.getMonth()+2).padStart(2,'0')}-01T00:00:00`;
-    const [gastos, fijos, budgetData] = await Promise.all([
-      sbFetch('gastos', {select:'*', fecha:`gte.${from12}`, order:'fecha.desc'}),
-      sbFetch('gastos_fijos', {select:'*'}),
-      sbFetch('presupuesto', {select:'*', mes:`eq.${now.getMonth()+1}`, year:`eq.${year}`}),
+async function loadAll(){
+  try{
+    const now=new Date(),y=now.getFullYear();
+    const from12=`${y-1}-${String(now.getMonth()+2).padStart(2,'0')}-01T00:00:00`;
+    const [g,f,b]=await Promise.all([
+      sb('gastos',{select:'*',fecha:`gte.${from12}`,order:'fecha.desc'}),
+      sb('gastos_fijos',{select:'*'}),
+      sb('presupuesto',{select:'*',mes:`eq.${now.getMonth()+1}`,year:`eq.${y}`}),
     ]);
-    allGastos = gastos;
-    allFijos = fijos;
-    budget = budgetData[0] ? parseFloat(budgetData[0].monto) : null;
+    gastos=g; fijos=f;
+    budget=b[0]?parseFloat(b[0].monto):null;
     render();
-  } catch(e) {
+  }catch(e){
     console.error(e);
-    document.getElementById('kpiGrid').innerHTML = `<div class="kpi-card" style="grid-column:1/-1"><div class="empty">❌ Error al conectar con Supabase.<br><small>${e.message}</small></div></div>`;
+    document.getElementById('kpiGrid').innerHTML=`<div class="kpi" style="grid-column:1/-1"><div class="empty">❌ Error: ${e.message}</div></div>`;
   }
 }
 
-// ── Period helpers ────────────────────────────────────────────────────────────
-function getPeriodRange() {
-  const now = new Date();
-  let from, to, label;
-  if (currentPeriod === 'month') {
-    from = new Date(now.getFullYear(), now.getMonth(), 1);
-    to   = new Date(now.getFullYear(), now.getMonth()+1, 0);
-    label = from.toLocaleDateString('es',{month:'long',year:'numeric'}).replace(/^\w/,c=>c.toUpperCase());
-  } else if (currentPeriod === 'last_month') {
-    from = new Date(now.getFullYear(), now.getMonth()-1, 1);
-    to   = new Date(now.getFullYear(), now.getMonth(), 0);
-    label = from.toLocaleDateString('es',{month:'long',year:'numeric'}).replace(/^\w/,c=>c.toUpperCase());
-  } else if (currentPeriod === 'year') {
-    from = new Date(now.getFullYear(), 0, 1);
-    to   = new Date(now.getFullYear(), 11, 31);
-    label = `Año ${now.getFullYear()}`;
-  } else {
-    from = customFrom ? new Date(customFrom) : new Date(now.getFullYear(), now.getMonth(), 1);
-    to   = customTo   ? new Date(customTo)   : now;
-    label = `${from.toLocaleDateString('es',{day:'numeric',month:'short'})} → ${to.toLocaleDateString('es',{day:'numeric',month:'short',year:'numeric'})}`;
+// ── Period ─────────────────────────────────────────────────────────────────
+function getRange(){
+  const now=new Date();
+  let from,to,label;
+  if(period==='month'){
+    from=new Date(now.getFullYear(),now.getMonth(),1,0,0,0);
+    to=new Date(now.getFullYear(),now.getMonth()+1,0,23,59,59);
+    label=from.toLocaleDateString('es',{month:'long',year:'numeric'}).replace(/^\w/,c=>c.toUpperCase());
+  }else if(period==='last_month'){
+    from=new Date(now.getFullYear(),now.getMonth()-1,1,0,0,0);
+    to=new Date(now.getFullYear(),now.getMonth(),0,23,59,59);
+    label=from.toLocaleDateString('es',{month:'long',year:'numeric'}).replace(/^\w/,c=>c.toUpperCase());
+  }else if(period==='year'){
+    from=new Date(now.getFullYear(),0,1,0,0,0);
+    to=new Date(now.getFullYear(),11,31,23,59,59);
+    label=`Año ${now.getFullYear()}`;
+  }else{
+    from=cFrom?new Date(cFrom+' 00:00:00'):new Date(now.getFullYear(),now.getMonth(),1);
+    to=cTo?new Date(cTo+' 23:59:59'):now;
+    label=`${from.toLocaleDateString('es',{day:'2-digit',month:'short'})} → ${to.toLocaleDateString('es',{day:'2-digit',month:'short',year:'numeric'})}`;
   }
-  return {from, to, label};
+  return{from,to,label};
+}
+function filtered(){
+  const{from,to}=getRange();
+  return gastos.filter(g=>{const d=new Date(g.fecha);return d>=from&&d<=to;});
 }
 
-function filterGastos(gastos) {
-  const {from, to} = getPeriodRange();
-  return gastos.filter(g => {
-    const d = new Date(g.fecha);
-    return d >= from && d <= new Date(to.getFullYear(), to.getMonth(), to.getDate(), 23, 59, 59);
-  });
+// ── Render ─────────────────────────────────────────────────────────────────
+function render(){
+  const f=filtered();
+  const{label}=getRange();
+  document.getElementById('pLabel').textContent=label;
+  activeCat=null;
+  renderKPIs(f);
+  renderLine(f);
+  renderDonut(f);
+  renderCats(f);
+  renderFilters(f);
+  renderTx(f);
 }
 
-// ── Render ────────────────────────────────────────────────────────────────────
-function render() {
-  const filtered = filterGastos(allGastos);
-  const {label} = getPeriodRange();
-  document.getElementById('periodLabel').textContent = label;
-  renderKPIs(filtered);
-  renderLineChart(filtered);
-  renderDonut(filtered);
-  renderCatBars(filtered);
-  renderTable(filtered);
-}
+// ── KPIs ──────────────────────────────────────────────────────────────────
+function renderKPIs(f){
+  const total=f.reduce((s,g)=>s+parseFloat(g.monto),0);
+  const fijosAct=fijos.filter(x=>x.activo);
+  const fijosTotal=fijosAct.reduce((s,x)=>s+parseFloat(x.monto),0);
+  const disp=budget?budget-total:null;
+  const pct=budget?Math.min(total/budget*100,100):0;
+  const pc=pct>=100?'var(--danger)':pct>=80?'var(--warn)':'var(--accent2)';
 
-// ── KPIs ──────────────────────────────────────────────────────────────────────
-function renderKPIs(gastos) {
-  const total    = gastos.reduce((s,g) => s+parseFloat(g.monto), 0);
-  const fijosTotal = allFijos.filter(f=>f.activo).reduce((s,f)=>s+parseFloat(f.monto),0);
-  const disponible = budget ? budget - total : null;
-  const pct = budget ? Math.min(total/budget*100, 100) : 0;
-  const pctColor = pct >= 100 ? '#e63946' : pct >= 80 ? '#f4a261' : '#52b788';
+  // vs prev period
+  const{from,to}=getRange();
+  const span=to-from;
+  const prevFrom=new Date(from-span), prevTo=new Date(from-1);
+  const prev=gastos.filter(g=>{const d=new Date(g.fecha);return d>=prevFrom&&d<=prevTo;});
+  const prevTotal=prev.reduce((s,g)=>s+parseFloat(g.monto),0);
+  const diff=prevTotal>0?((total-prevTotal)/prevTotal*100):null;
+  const diffBadge=diff!==null?`<span class="badge ${diff>0?'br':'bg'}">${diff>0?'↑':'↓'}${Math.abs(diff).toFixed(0)}%</span>`:'';
 
-  // Badge for prev period comparison (simple estimate)
-  const now = new Date();
-  let prevTotal = 0;
-  if (currentPeriod === 'month') {
-    const prev = allGastos.filter(g => {
-      const d = new Date(g.fecha);
-      return d.getFullYear() === now.getFullYear() && d.getMonth() === now.getMonth()-1;
-    });
-    prevTotal = prev.reduce((s,g)=>s+parseFloat(g.monto),0);
-  }
-  const diff = prevTotal > 0 ? ((total-prevTotal)/prevTotal*100).toFixed(0) : null;
-  const diffBadge = diff !== null ? `<span class="badge ${diff>0?'badge-red':'badge-green'}">${diff>0?'↑':'↓'}${Math.abs(diff)}%</span>` : '';
+  // Fijos list
+  const fijosHtml=fijosAct.map(f=>`
+    <div class="fijo-row">
+      <div><div class="fijo-name">${f.nombre}</div><div class="fijo-day">día ${f.dia_cobro}</div></div>
+      <div class="fijo-amt">€${parseFloat(f.monto).toFixed(2)}</div>
+    </div>`).join('');
 
-  document.getElementById('kpiGrid').innerHTML = `
-    <div class="kpi-card">
-      <div class="kpi-label">Total gastado</div>
-      <div class="kpi-value">€${total.toFixed(2)}</div>
-      <div class="kpi-sub">${diffBadge} ${diff!==null?`vs mes anterior`:''}</div>
-      <div class="progress-bar"><div class="progress-fill" style="width:${pct}%;background:${pctColor}"></div></div>
+  document.getElementById('kpiGrid').innerHTML=`
+    <div class="kpi">
+      <div class="kpi-lbl">Total gastado</div>
+      <div class="kpi-val">€${total.toFixed(2)}</div>
+      <div class="kpi-sub">${diffBadge}<span>${diff!==null?`vs período anterior`:''}</span></div>
+      <div class="pbar"><div class="pfill" style="width:${pct}%;background:${pc}"></div></div>
     </div>
-    <div class="kpi-card">
-      <div class="kpi-label">Presupuesto</div>
-      <div class="kpi-value">${budget ? '€'+budget.toFixed(2) : '—'}</div>
-      <div class="kpi-sub" style="color:${pctColor}">${budget ? pct.toFixed(0)+'% consumido' : 'No configurado'}</div>
+    <div class="kpi">
+      <div class="kpi-lbl">Presupuesto</div>
+      <div class="kpi-val">${budget?'€'+budget.toFixed(2):'—'}</div>
+      <div class="kpi-sub" style="color:${pc}">${budget?pct.toFixed(0)+'% consumido':'No configurado'}</div>
     </div>
-    <div class="kpi-card">
-      <div class="kpi-label">Disponible</div>
-      <div class="kpi-value" style="color:${disponible!==null&&disponible<0?'var(--danger)':'var(--accent)'}">${disponible!==null?'€'+disponible.toFixed(2):'—'}</div>
-      <div class="kpi-sub">${disponible!==null?(disponible<0?'<span class="badge badge-red">Excedido</span>':'<span class="badge badge-green">En presupuesto</span>'):''}</div>
+    <div class="kpi">
+      <div class="kpi-lbl">Disponible</div>
+      <div class="kpi-val" style="color:${disp!==null&&disp<0?'var(--danger)':'var(--accent)'}">${disp!==null?'€'+disp.toFixed(2):'—'}</div>
+      <div class="kpi-sub">${disp!==null?(disp<0?'<span class="badge br">Excedido</span>':'<span class="badge bg">En presupuesto</span>'):''}</div>
     </div>
-    <div class="kpi-card">
-      <div class="kpi-label">Gastos fijos / mes</div>
-      <div class="kpi-value">€${fijosTotal.toFixed(2)}</div>
-      <div class="kpi-sub">${allFijos.filter(f=>f.activo).length} fijos activos</div>
+    <div class="kpi">
+      <div class="kpi-lbl">Gastos fijos / mes</div>
+      <div class="kpi-val">€${fijosTotal.toFixed(2)}</div>
+      <div class="kpi-sub">${fijosAct.length} fijos activos</div>
+      ${fijosHtml?`<button class="expand-btn" onclick="toggleFijos(this)">▼ Ver detalle</button>
+      <div class="fijos-list">${fijosHtml}</div>`:''}
     </div>
   `;
 }
+function toggleFijos(btn){
+  const list=btn.nextElementSibling;
+  list.classList.toggle('open');
+  btn.textContent=list.classList.contains('open')?'▲ Ocultar detalle':'▼ Ver detalle';
+}
 
-// ── Line chart ────────────────────────────────────────────────────────────────
-function renderLineChart(gastos) {
-  const {from, to} = getPeriodRange();
-  const isYear = currentPeriod === 'year';
-  const now = new Date();
+// ── Line chart ─────────────────────────────────────────────────────────────
+function renderLine(f){
+  const{from,to}=getRange();
+  const isYear=period==='year';
+  const isDark=document.documentElement.getAttribute('data-theme')==='dark';
+  const gc=isDark?'rgba(255,255,255,.06)':'rgba(0,0,0,.06)';
+  const tc=isDark?'#6b6860':'#9e9b94';
 
-  if (isYear) {
-    // Monthly aggregation for year view
-    const months = Array.from({length:12}, (_,i) => {
-      const d = new Date(from.getFullYear(), i, 1);
-      return d.toLocaleDateString('es',{month:'short'});
-    });
-    const monthlySums = Array(12).fill(0);
-    gastos.forEach(g => {
-      const d = new Date(g.fecha);
-      monthlySums[d.getMonth()] += parseFloat(g.monto);
-    });
+  if(lineInst){lineInst.destroy();lineInst=null;}
 
-    buildLineChart(months, [{
-      label:'Gasto mensual', data:monthlySums,
-      color:'#52b788', fill:true
-    }], false);
+  if(isYear){
+    const labels=Array.from({length:12},(_,i)=>new Date(from.getFullYear(),i,1).toLocaleDateString('es',{month:'short'}));
+    const sums=Array(12).fill(0);
+    f.forEach(g=>{const m=new Date(g.fecha).getMonth();sums[m]+=parseFloat(g.monto);});
+    document.getElementById('lineLeg').innerHTML='';
+    lineInst=new Chart(document.getElementById('lineChart'),{type:'bar',data:{labels,datasets:[{
+      label:'Gasto mensual',data:sums,backgroundColor:COLORS[0]+'88',borderColor:COLORS[0],borderWidth:1.5,borderRadius:4
+    }]},options:chartOpts(gc,tc,'€',false)});
     return;
   }
 
-  // Daily cumulative for month view
-  const days = [];
-  const cumulative = [];
-  const projection = [];
-  const budgetLine = [];
+  // Daily cumulative
+  const now=new Date();
+  const labels=[],cum=[],proj=[],budg=[];
+  const dayMap={};
+  f.forEach(g=>{const k=g.fecha.slice(0,10);dayMap[k]=(dayMap[k]||0)+parseFloat(g.monto);});
 
-  const d = new Date(from);
-  let runningTotal = 0;
-  const dayMap = {};
-  gastos.forEach(g => {
-    const day = new Date(g.fecha).toISOString().slice(0,10);
-    dayMap[day] = (dayMap[day]||0) + parseFloat(g.monto);
-  });
-
-  while (d <= to) {
-    const key = d.toISOString().slice(0,10);
-    const label = d.getDate()+'';
-    days.push(label);
-    if (d <= now) {
-      runningTotal += dayMap[key]||0;
-      cumulative.push(parseFloat(runningTotal.toFixed(2)));
-    } else {
-      cumulative.push(null);
-    }
-    budgetLine.push(budget || null);
-    d.setDate(d.getDate()+1);
+  const cur=new Date(from);
+  let run=0;
+  while(cur<=to){
+    const k=cur.toISOString().slice(0,10);
+    labels.push(cur.getDate()+'');
+    budg.push(budget||null);
+    if(cur<=now){
+      run+=dayMap[k]||0;
+      cum.push(parseFloat(run.toFixed(2)));
+    }else cum.push(null);
+    cur.setDate(cur.getDate()+1);
   }
 
-  // Projection: linear extrapolation from current pace
-  const daysPassed = Math.max(1, Math.min(now.getDate(), cumulative.filter(v=>v!==null).length));
-  const currentTotal = cumulative.filter(v=>v!==null).slice(-1)[0] || 0;
-  const dailyRate = currentTotal / daysPassed;
-  let projRunning = currentTotal;
-  const projData = cumulative.map((v,i) => {
-    if (v !== null) return v;
-    projRunning += dailyRate;
-    return parseFloat(projRunning.toFixed(2));
-  });
+  // Projection: daily rate from actual days with spending
+  const daysWithData=Object.keys(dayMap).length||1;
+  const actualTotal=cum.filter(v=>v!==null).slice(-1)[0]||0;
+  const rate=actualTotal/daysWithData;
+  let pr=actualTotal;
+  const projData=cum.map(v=>{if(v!==null)return v;pr+=rate;return parseFloat(pr.toFixed(2));});
 
-  buildLineChart(days, [
-    {label:'Acumulado', data:cumulative, color:'#52b788', fill:true},
-    {label:'Proyección', data:projData, color:'#f4a261', dashed:true, fill:false},
-    {label:'Presupuesto', data:budgetLine, color:'#e63946', dashed:true, fill:false},
-  ], true);
+  document.getElementById('lineLeg').innerHTML=
+    [['Acumulado',COLORS[0]],['Proyección',COLORS[3]],['Presupuesto',COLORS[10]]]
+    .map(([l,c])=>`<div class="leg-item"><div class="leg-dot" style="background:${c}"></div>${l}</div>`).join('');
+
+  lineInst=new Chart(document.getElementById('lineChart'),{type:'line',data:{labels,datasets:[
+    {label:'Acumulado',data:cum,borderColor:COLORS[0],backgroundColor:COLORS[0]+'22',fill:true,tension:.4,borderWidth:2,pointRadius:0,pointHoverRadius:4,spanGaps:true},
+    {label:'Proyección',data:projData,borderColor:COLORS[3],backgroundColor:'transparent',fill:false,tension:.4,borderWidth:1.5,borderDash:[6,4],pointRadius:0,spanGaps:true},
+    {label:'Presupuesto',data:budg,borderColor:COLORS[10],backgroundColor:'transparent',fill:false,borderWidth:1.5,borderDash:[4,4],pointRadius:0,spanGaps:true},
+  ]},options:chartOpts(gc,tc,'€',true)});
 }
 
-function buildLineChart(labels, datasets, showLegend) {
-  const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-  const gridColor = isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)';
-  const textColor = isDark ? '#6b6860' : '#9e9b94';
-
-  if (lineChartInst) lineChartInst.destroy();
-
-  // Legend
-  if (showLegend) {
-    document.getElementById('lineLegend').innerHTML = datasets.map(ds =>
-      `<div class="legend-item"><div class="legend-dot" style="background:${ds.color}"></div>${ds.label}</div>`
-    ).join('');
-  } else {
-    document.getElementById('lineLegend').innerHTML = '';
-  }
-
-  lineChartInst = new Chart(document.getElementById('lineChart'), {
-    type: 'line',
-    data: {
-      labels,
-      datasets: datasets.map(ds => ({
-        label: ds.label,
-        data: ds.data,
-        borderColor: ds.color,
-        backgroundColor: ds.fill ? ds.color+'22' : 'transparent',
-        fill: ds.fill,
-        tension: 0.4,
-        borderWidth: ds.dashed ? 1.5 : 2,
-        borderDash: ds.dashed ? [6,4] : [],
-        pointRadius: 0,
-        pointHoverRadius: 5,
-        pointHoverBackgroundColor: ds.color,
-        spanGaps: true,
-      }))
-    },
-    options: {
-      responsive: true, maintainAspectRatio: false,
-      interaction: {mode:'index', intersect:false},
-      plugins: {
-        legend: {display:false},
-        tooltip: {
-          backgroundColor: isDark ? '#1a1916' : '#fff',
-          borderColor: isDark ? '#2e2c28' : '#e4e2d9',
-          borderWidth: 1,
-          titleColor: isDark ? '#f0ede4' : '#1a1916',
-          bodyColor: isDark ? '#a09d95' : '#6b6860',
-          padding: 12,
-          callbacks: {label: ctx => ` ${ctx.dataset.label}: €${ctx.parsed.y?.toFixed(2)||'—'}`}
-        }
-      },
-      scales: {
-        x: {grid:{color:gridColor}, ticks:{color:textColor, maxTicksLimit:10, font:{size:11}}},
-        y: {grid:{color:gridColor}, ticks:{color:textColor, font:{size:11}, callback:v=>`€${v}`}, beginAtZero:true}
+function chartOpts(gc,tc,prefix,showLeg){
+  const isDark=document.documentElement.getAttribute('data-theme')==='dark';
+  return{
+    responsive:true,maintainAspectRatio:false,
+    interaction:{mode:'index',intersect:false},
+    plugins:{
+      legend:{display:false},
+      tooltip:{
+        backgroundColor:isDark?'#1a1916':'#fff',
+        borderColor:isDark?'#2e2c28':'#e4e2d9',borderWidth:1,
+        titleColor:isDark?'#f0ede4':'#1a1916',
+        bodyColor:isDark?'#a09d95':'#6b6860',padding:10,
+        callbacks:{label:ctx=>` ${ctx.dataset.label}: ${prefix}${ctx.parsed.y?.toFixed(2)||'—'}`}
       }
-    }
-  });
-}
-
-// ── Donut chart ───────────────────────────────────────────────────────────────
-function renderDonut(gastos) {
-  const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-  const catMap = {};
-  gastos.forEach(g => catMap[g.categoria] = (catMap[g.categoria]||0) + parseFloat(g.monto));
-  const sorted = Object.entries(catMap).sort((a,b)=>b[1]-a[1]);
-  const labels = sorted.map(([k])=>k);
-  const data   = sorted.map(([,v])=>parseFloat(v.toFixed(2)));
-
-  if (donutChartInst) donutChartInst.destroy();
-  if (!data.length) { document.getElementById('donutChart').parentElement.innerHTML = '<div class="empty">Sin datos</div>'; return; }
-
-  donutChartInst = new Chart(document.getElementById('donutChart'), {
-    type: 'doughnut',
-    data: {
-      labels,
-      datasets: [{data, backgroundColor: CAT_COLORS, borderWidth:2,
-        borderColor: isDark ? '#1a1916' : '#fff',
-        hoverBorderColor: isDark ? '#1a1916' : '#fff',
-      }]
     },
-    options: {
-      responsive: true, maintainAspectRatio: false, cutout: '72%',
-      plugins: {
-        legend: {
-          position: 'bottom',
-          labels: {
-            color: isDark ? '#a09d95' : '#6b6860',
-            font: {size:11, family:'DM Sans'},
-            padding: 12, boxWidth:10, boxHeight:10, usePointStyle:true
-          }
-        },
-        tooltip: {
-          backgroundColor: isDark?'#1a1916':'#fff',
-          borderColor: isDark?'#2e2c28':'#e4e2d9', borderWidth:1,
-          titleColor: isDark?'#f0ede4':'#1a1916',
-          bodyColor: isDark?'#a09d95':'#6b6860',
-          callbacks: {
-            label: ctx => {
-              const total = ctx.dataset.data.reduce((a,b)=>a+b,0);
-              const pct = (ctx.raw/total*100).toFixed(1);
-              return ` €${ctx.raw.toFixed(2)} (${pct}%)`;
-            }
-          }
-        }
-      },
-      onClick: (e, els) => {
-        if (!els.length) { selectedCat = null; } else {
-          const cat = labels[els[0].index];
-          selectedCat = selectedCat === cat ? null : cat;
-        }
-        const filtered = filterGastos(allGastos);
-        renderTable(selectedCat ? filtered.filter(g=>g.categoria===selectedCat) : filtered);
-        document.getElementById('txSubtitle').textContent = selectedCat ? `Filtrando: ${selectedCat}` : `Últimas transacciones`;
-      }
+    scales:{
+      x:{grid:{color:gc},ticks:{color:tc,maxTicksLimit:10,font:{size:10}}},
+      y:{grid:{color:gc},ticks:{color:tc,font:{size:10},callback:v=>`${prefix}${v}`},beginAtZero:true}
     }
-  });
+  };
 }
 
-// ── Category bars ─────────────────────────────────────────────────────────────
-function renderCatBars(gastos) {
-  const catMap = {};
-  gastos.forEach(g => catMap[g.categoria] = (catMap[g.categoria]||0) + parseFloat(g.monto));
-  const total = Object.values(catMap).reduce((a,b)=>a+b, 0);
-  const sorted = Object.entries(catMap).sort((a,b)=>b[1]-a[1]);
+// ── Donut ──────────────────────────────────────────────────────────────────
+function renderDonut(f){
+  const isDark=document.documentElement.getAttribute('data-theme')==='dark';
+  const map={};
+  f.forEach(g=>map[g.categoria]=(map[g.categoria]||0)+parseFloat(g.monto));
+  const sorted=Object.entries(map).sort((a,b)=>b[1]-a[1]);
 
-  document.getElementById('catSubtitle').textContent = `${sorted.length} categorías · €${total.toFixed(2)}`;
-  document.getElementById('catList').innerHTML = sorted.map(([cat, amount], i) => {
-    const pct = total > 0 ? (amount/total*100) : 0;
-    return `
-      <div class="cat-row">
-        <div class="cat-row-top">
-          <span class="cat-name">${cat}</span>
-          <span class="cat-amount">€${amount.toFixed(2)}</span>
-        </div>
-        <div class="cat-bar">
-          <div class="cat-fill" style="width:0%;background:${CAT_COLORS[i%CAT_COLORS.length]}"
-            data-target="${pct}"></div>
-        </div>
-      </div>
-    `;
-  }).join('') || '<div class="empty">Sin datos</div>';
-
-  // Animate bars
-  setTimeout(() => {
-    document.querySelectorAll('.cat-fill').forEach(el => {
-      el.style.width = el.dataset.target + '%';
-    });
-  }, 50);
-}
-
-// ── Table ─────────────────────────────────────────────────────────────────────
-function renderTable(gastos) {
-  const sorted = [...gastos].sort((a,b) => new Date(b.fecha)-new Date(a.fecha)).slice(0, 20);
-  document.getElementById('txSubtitle').textContent = selectedCat
-    ? `${sorted.length} transacciones · ${selectedCat}`
-    : `Últimas ${sorted.length} transacciones`;
-
-  if (!sorted.length) {
-    document.getElementById('txBody').innerHTML = '<tr><td colspan="3"><div class="empty">Sin transacciones</div></td></tr>';
-    return;
+  if(donutInst){donutInst.destroy();donutInst=null;}
+  const el=document.getElementById('donut');
+  if(!sorted.length){el.parentElement.innerHTML='<div class="empty">Sin datos en este período</div>';return;}
+  // Restore canvas if replaced
+  if(!document.getElementById('donut')){
+    el.parentElement.innerHTML='<canvas id="donut"></canvas>';
   }
 
-  document.getElementById('txBody').innerHTML = sorted.map(g => {
-    const d = new Date(g.fecha);
-    const fecha = d.toLocaleDateString('es',{day:'2-digit',month:'short'}) + ' ' + d.toLocaleTimeString('es',{hour:'2-digit',minute:'2-digit'});
-    const detalle = g.item_nombre
-      ? `${g.item_nombre} <span class="tipo-pill ${g.item_tipo==='necesidad'?'tipo-need':'tipo-want'}">${g.item_tipo==='necesidad'?'🧾':'✨'}</span>`
-      : `${g.subcategoria}${g.nota?` <span style="color:var(--text3);font-size:11px">· ${g.nota}</span>`:''}`;
-    return `
-      <tr>
-        <td style="color:var(--text2);font-family:'DM Mono',monospace;font-size:11px;white-space:nowrap">${fecha}</td>
-        <td>${detalle}<br><span class="cat-pill">${g.categoria}</span></td>
-        <td class="amount-neg">−€${parseFloat(g.monto).toFixed(2)}</td>
-      </tr>
-    `;
+  donutInst=new Chart(document.getElementById('donut'),{type:'doughnut',data:{
+    labels:sorted.map(([k])=>k),
+    datasets:[{data:sorted.map(([,v])=>parseFloat(v.toFixed(2))),
+      backgroundColor:COLORS,borderWidth:2,
+      borderColor:isDark?'#1a1916':'#fff',
+      hoverOffset:6}]
+  },{
+    responsive:true,maintainAspectRatio:false,cutout:'68%',
+    plugins:{
+      legend:{position:'bottom',labels:{color:isDark?'#a09d95':'#6b6860',font:{size:10,family:'DM Sans'},padding:8,boxWidth:8,boxHeight:8,usePointStyle:true}},
+      tooltip:{
+        backgroundColor:isDark?'#1a1916':'#fff',borderColor:isDark?'#2e2c28':'#e4e2d9',borderWidth:1,
+        titleColor:isDark?'#f0ede4':'#1a1916',bodyColor:isDark?'#a09d95':'#6b6860',
+        callbacks:{label:ctx=>{const t=ctx.dataset.data.reduce((a,b)=>a+b,0);return ` €${ctx.raw.toFixed(2)} (${(ctx.raw/t*100).toFixed(1)}%)`;}}
+      }
+    },
+    onClick:(e,els)=>{
+      if(!els.length){activeCat=null;}else{
+        const cat=sorted[els[0].index][0];
+        activeCat=activeCat===cat?null:cat;
+      }
+      const fx=activeCat?filtered().filter(g=>g.categoria===activeCat):filtered();
+      renderTx(fx);
+      // Sync filter buttons
+      document.querySelectorAll('.filt-btn').forEach(b=>{
+        b.classList.toggle('on',b.dataset.cat===activeCat);
+      });
+      document.getElementById('txSub').textContent=activeCat?`Filtrando: ${activeCat}`:`Últimas transacciones`;
+    }
+  }});
+}
+
+// ── Cat bars ──────────────────────────────────────────────────────────────
+function renderCats(f){
+  const map={};
+  f.forEach(g=>map[g.categoria]=(map[g.categoria]||0)+parseFloat(g.monto));
+  const total=Object.values(map).reduce((a,b)=>a+b,0);
+  const sorted=Object.entries(map).sort((a,b)=>b[1]-a[1]);
+  document.getElementById('catSub').textContent=`${sorted.length} categorías · €${total.toFixed(2)}`;
+  document.getElementById('catList').innerHTML=sorted.map(([cat,amt],i)=>`
+    <div class="cat-row" onclick="filterByCat('${cat.replace(/'/g,"\\'")}')">
+      <div class="top"><span class="cat-name">${cat}</span><span class="cat-amt">€${amt.toFixed(2)}</span></div>
+      <div class="cat-bar"><div class="cat-fill" style="width:0%;background:${COLORS[i%COLORS.length]}" data-w="${total>0?(amt/total*100):0}"></div></div>
+    </div>`).join('')||'<div class="empty">Sin datos</div>';
+  setTimeout(()=>{document.querySelectorAll('.cat-fill').forEach(el=>{el.style.width=el.dataset.w+'%';});},50);
+}
+
+function filterByCat(cat){
+  activeCat=activeCat===cat?null:cat;
+  const fx=activeCat?filtered().filter(g=>g.categoria===activeCat):filtered();
+  renderTx(fx);
+  document.querySelectorAll('.filt-btn').forEach(b=>b.classList.toggle('on',b.dataset.cat===activeCat));
+  document.getElementById('txSub').textContent=activeCat?`Filtrando: ${activeCat}`:`Últimas transacciones`;
+}
+
+// ── TX Filters ─────────────────────────────────────────────────────────────
+function renderFilters(f){
+  const cats=[...new Set(f.map(g=>g.categoria))];
+  document.getElementById('txFilters').innerHTML=
+    `<button class="filt-btn on" data-cat="" onclick="filtClick(this,'')">Todas</button>`+
+    cats.map(c=>`<button class="filt-btn" data-cat="${c}" onclick="filtClick(this,'${c.replace(/'/g,"\\'")}')">${c}</button>`).join('');
+}
+function filtClick(btn,cat){
+  activeCat=cat||null;
+  document.querySelectorAll('.filt-btn').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  const fx=activeCat?filtered().filter(g=>g.categoria===activeCat):filtered();
+  renderTx(fx);
+  document.getElementById('txSub').textContent=activeCat?`Filtrando: ${activeCat}`:`Últimas transacciones`;
+}
+
+// ── Transactions ──────────────────────────────────────────────────────────
+function renderTx(f){
+  const sorted=[...f].sort((a,b)=>new Date(b.fecha)-new Date(a.fecha)).slice(0,25);
+  document.getElementById('txSub').textContent=activeCat?`${sorted.length} en ${activeCat}`:`Últimas ${sorted.length}`;
+  if(!sorted.length){document.getElementById('txBody').innerHTML='<tr><td colspan="3"><div class="empty">Sin transacciones</div></td></tr>';return;}
+  document.getElementById('txBody').innerHTML=sorted.map((g,i)=>{
+    const d=new Date(g.fecha);
+    const fd=d.toLocaleDateString('es',{day:'2-digit',month:'short'})+' '+d.toLocaleTimeString('es',{hour:'2-digit',minute:'2-digit'});
+    const det=g.item_nombre
+      ?`${g.item_nombre} <span class="tipo ${g.item_tipo==='necesidad'?'tn':'tg'}">${g.item_tipo==='necesidad'?'🧾':'✨'}</span>`
+      :`${g.subcategoria}${g.nota?` <span style="color:var(--text3);font-size:10px">· ${g.nota}</span>`:''}`;
+    return`<tr class="tx-row" onclick="openDet(${JSON.stringify(g).replace(/"/g,'&quot;')})">
+      <td style="color:var(--text2);font-family:'DM Mono',monospace;font-size:10px;white-space:nowrap">${fd}</td>
+      <td>${det}<br><span class="cpill">${g.categoria}</span></td>
+      <td class="mono">−€${parseFloat(g.monto).toFixed(2)}</td>
+    </tr>`;
   }).join('');
 }
 
-// ── Period controls ────────────────────────────────────────────────────────────
-function setPeriod(p) {
-  currentPeriod = p;
-  document.querySelectorAll('.period-tab').forEach(t => {
-    const map = {'month':'Este mes','last_month':'Mes anterior','year':'Este año','custom':'Custom'};
-    t.classList.toggle('active', t.textContent === map[p]);
-  });
-  document.getElementById('customRange').style.display = p === 'custom' ? 'flex' : 'none';
-  if (p !== 'custom') render();
+// ── TX Detail ─────────────────────────────────────────────────────────────
+function openDet(g){
+  const d=new Date(g.fecha);
+  const fecha=d.toLocaleDateString('es',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+  const hora=d.toLocaleTimeString('es',{hour:'2-digit',minute:'2-digit'});
+  const itemHtml=g.item_nombre?`
+    <div class="det-field"><div class="det-lbl">Ítem</div><div class="det-val">${g.item_nombre} <span class="tipo ${g.item_tipo==='necesidad'?'tn':'tg'}">${g.item_tipo==='necesidad'?'🧾 Necesidad':'✨ Gusto'}</span></div></div>`:'';
+  const notaHtml=g.nota?`<div class="det-field"><div class="det-lbl">Nota</div><div class="det-val" style="color:var(--text2)">${g.nota}</div></div>`:'';
+  document.getElementById('detContent').innerHTML=`
+    <div style="margin-bottom:18px"><div style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.6px;font-weight:600">Detalle del gasto</div></div>
+    <div class="det-monto">−€${parseFloat(g.monto).toFixed(2)}</div>
+    <div class="det-field"><div class="det-lbl">Categoría</div><div class="det-val">${g.categoria}</div></div>
+    <div class="det-field"><div class="det-lbl">Subcategoría</div><div class="det-val">${g.subcategoria}</div></div>
+    ${itemHtml}
+    <div class="det-field"><div class="det-lbl">Fecha</div><div class="det-val">${fecha}</div></div>
+    <div class="det-field"><div class="det-lbl">Hora</div><div class="det-val">${hora}</div></div>
+    ${notaHtml}
+  `;
+  document.getElementById('txDetail').classList.add('open');
+}
+function closeDet(){document.getElementById('txDetail').classList.remove('open');}
+
+// ── Period controls ────────────────────────────────────────────────────────
+function setPeriod(p,btn){
+  period=p;
+  document.querySelectorAll('#periodTabs .ptab').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  document.getElementById('customRow').style.display=p==='custom'?'flex':'none';
+  if(p!=='custom')render();
+}
+function setPeriodMob(p,btn){
+  period=p;
+  document.querySelectorAll('#mobPeriod .ptab').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  if(p!=='custom')render();
+}
+function applyCustom(){
+  cFrom=document.getElementById('dtFrom').value;
+  cTo=document.getElementById('dtTo').value;
+  if(cFrom&&cTo)render();
 }
 
-function applyCustom() {
-  customFrom = document.getElementById('dateFrom').value;
-  customTo   = document.getElementById('dateTo').value;
-  if (!customFrom || !customTo) return;
-  render();
-}
-
-// ── Theme ──────────────────────────────────────────────────────────────────────
-function toggleTheme() {
-  const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-  document.documentElement.setAttribute('data-theme', isDark ? 'light' : 'dark');
-  document.getElementById('themeBtn').textContent = isDark ? '🌙' : '☀️';
-  localStorage.setItem('cashito_theme', isDark ? 'light' : 'dark');
-  // Redraw charts for theme colors
-  const filtered = filterGastos(allGastos);
-  renderLineChart(filtered);
-  renderDonut(filtered);
+// ── Theme ──────────────────────────────────────────────────────────────────
+function toggleTheme(){
+  const dark=document.documentElement.getAttribute('data-theme')==='dark';
+  document.documentElement.setAttribute('data-theme',dark?'light':'dark');
+  document.getElementById('themeBtn').textContent=dark?'🌙':'☀️';
+  localStorage.setItem('c_theme',dark?'light':'dark');
+  const f=activeCat?filtered().filter(g=>g.categoria===activeCat):filtered();
+  renderLine(filtered());
+  renderDonut(filtered());
 }
 </script>
 </body>
