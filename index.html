@@ -439,18 +439,19 @@ function renderKPIs(f){
   var expected=prevTotal>0?(prevTotal/prevDays)*daysElapsed:null;
   var vsRel=expected?((total-expected)/expected*100):null;
 
-  // Balance
-  var totalIngresos=allIngresos.reduce(function(s,i){return s+parseFloat(i.monto);},0);
+  // Balance — always historical total, independent of period
+  var totalIngresosAll=allIngresos.reduce(function(s,i){return s+parseFloat(i.monto);},0);
   var totalGastosAll=allGastos.reduce(function(s,g){return s+parseFloat(g.monto);},0);
   var today=now.getDate();
   var fijAct=allFijos.filter(function(x){return x.activo;});
   var fijosPend=fijAct.reduce(function(s,x){return s+(x.dia_cobro>=today?parseFloat(x.monto):0);},0);
-  var balance=totalIngresos>0?(totalIngresos-totalGastosAll-fijosPend):null;
+  var balance=totalIngresosAll>0?(totalIngresosAll-totalGastosAll-fijosPend):null;
+
+  // Period-specific context for balance card
+  var ingresosPeriodo=getFiltered(allIngresos).reduce(function(s,i){return s+parseFloat(i.monto);},0);
   var daysLeft=Math.max(0,daysTotal-daysElapsed);
   var dailyRate=daysElapsed>0?total/daysElapsed:0;
   var projBalance=balance!==null?(balance-dailyRate*daysLeft):null;
-  var ultimoIng=allIngresos.length?allIngresos[0]:null;
-  var updAt=ultimoIng?new Date(ultimoIng.fecha).toLocaleDateString('es',{day:'2-digit',month:'short'}):'—';
 
   document.getElementById('kpiRow').innerHTML=
     '<div class="kpi">'+
@@ -468,11 +469,10 @@ function renderKPIs(f){
       '<div>'+
         '<div class="kpi-lbl">Balance disponible</div>'+
         '<div class="kpi-val" style="color:'+(balance!==null&&balance<0?'var(--dng)':'var(--acc)')+'">'+(balance!==null?'€'+balance.toFixed(2):'Sin ingresos')+'</div>'+
-        '<div class="kpi-sub">'+(totalIngresos?'Ingresos: €'+totalIngresos.toFixed(2)+' · ':'')+'Último: '+updAt+(projBalance!==null?' · Proy: €'+projBalance.toFixed(2):'')+'</div>'+
+        '<div class="kpi-sub">Ingresos período: €'+ingresosPeriodo.toFixed(2)+' · Gastos período: −€'+total.toFixed(2)+'</div>'+
       '</div>'+
       '<div class="kpi-right">'+
-        (fijosPend?'<div class="vs-pill"><span class="vs-lbl">Fijos pend.</span><span class="vs-val dn">−€'+fijosPend.toFixed(2)+'</span></div>':'')+
-        (dailyRate?'<div class="vs-pill"><span class="vs-lbl">Gasto proy.</span><span class="vs-val nu">−€'+(dailyRate*daysLeft).toFixed(2)+'</span></div>':'')+
+        (dailyRate?'<div class="vs-pill"><span class="vs-lbl">Gasto proy.</span><span class="vs-val dn">−€'+(dailyRate*daysLeft).toFixed(2)+'</span></div>':'')+
       '</div>'+
     '</div>';
 }
