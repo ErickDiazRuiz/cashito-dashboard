@@ -496,14 +496,24 @@ function renderKPIs(f){
   var saldoMonto=saldo?parseFloat(saldo.monto):null;
   var updAt=saldo?new Date(saldo.updated_at).toLocaleDateString('es',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'}):'—';
 
-  // Saldo projection: saldo - fijos pending - projected variable spend rest of month
+  // Saldo real = saldo ingresado − gastos registrados desde esa fecha − fijos pendientes
   var fijAct=allFijos.filter(function(x){return x.activo;});
   var today=now.getDate();
   var fijosPend=fijAct.reduce(function(s,x){return s+(x.dia_cobro>=today?parseFloat(x.monto):0);},0);
+
+  // Gastos registrados DESDE que se actualizó el saldo
+  var saldoFecha=saldo?new Date(saldo.updated_at):null;
+  var gastosDesde=saldoFecha
+    ? allGastos.filter(function(g){return new Date(g.fecha)>=saldoFecha;})
+    : [];
+  var gastosDesdeTotal=gastosDesde.reduce(function(s,g){return s+parseFloat(g.monto);},0);
+  var saldoReal=saldoMonto!==null?(saldoMonto-gastosDesdeTotal-fijosPend):null;
+
+  // Proyección: saldo real − gasto variable proyectado restante del mes
   var daysLeft=Math.max(0,daysTotal-daysElapsed);
   var dailyRate=total/Math.max(1,daysElapsed);
   var projGastoRest=dailyRate*daysLeft;
-  var projSaldo=saldoMonto!==null?(saldoMonto-fijosPend-projGastoRest):null;
+  var projSaldo=saldoReal!==null?(saldoReal-projGastoRest):null;
 
   document.getElementById('kpiRow').innerHTML=
     '<div class="kpi">'+
@@ -520,12 +530,12 @@ function renderKPIs(f){
     '<div class="kpi">'+
       '<div class="kpi-left">'+
         '<div class="kpi-lbl">Saldo disponible</div>'+
-        '<div class="kpi-val">'+(saldoMonto!==null?'€'+saldoMonto.toFixed(2):'—')+'</div>'+
-        '<div class="kpi-sub">Actualizado: '+updAt+(projSaldo!==null?' · Proyección fin mes: €'+projSaldo.toFixed(2):'')+'</div>'+
+        '<div class="kpi-val" style="color:'+(saldoReal!==null&&saldoReal<0?'var(--dng)':'var(--acc)')+'">'+(saldoReal!==null?'€'+saldoReal.toFixed(2):'—')+'</div>'+
+        '<div class="kpi-sub">Banco: €'+(saldoMonto!==null?saldoMonto.toFixed(2):'—')+' · Actualizado: '+updAt+(projSaldo!==null?' · Proyección: €'+projSaldo.toFixed(2):'')+'</div>'+
       '</div>'+
       '<div class="kpi-right">'+
+        (gastosDesdeTotal?'<div class="vs-pill"><span class="vs-lbl">Gastos desde actualiz.</span><span class="vs-val dn">−€'+gastosDesdeTotal.toFixed(2)+'</span></div>':'')+
         (fijosPend?'<div class="vs-pill"><span class="vs-lbl">Fijos pendientes</span><span class="vs-val dn">−€'+fijosPend.toFixed(2)+'</span></div>':'')+
-        (projGastoRest?'<div class="vs-pill"><span class="vs-lbl">Proyección gasto</span><span class="vs-val dn">−€'+projGastoRest.toFixed(2)+'</span></div>':'')+
       '</div>'+
     '</div>';
 }
