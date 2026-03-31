@@ -574,12 +574,19 @@ function renderLine(f){
     return;
   }
 
+  // Use local date string to avoid UTC timezone shift
+  function localDateStr(d){
+    return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+  }
   var dayMap={};
-  f.forEach(function(g){var k=g.fecha.slice(0,10);dayMap[k]=(dayMap[k]||0)+parseFloat(g.monto);});
+  f.forEach(function(g){
+    var k=localDateStr(new Date(g.fecha));
+    dayMap[k]=(dayMap[k]||0)+parseFloat(g.monto);
+  });
   var labs2=[],cum=[],proj=[];
   var cur=new Date(r.from), run=0;
   while(cur<=r.to){
-    var k=cur.toISOString().slice(0,10);
+    var k=localDateStr(cur);
     labs2.push(cur.getDate()+'');
     if(cur<=now){run+=dayMap[k]||0;cum.push(parseFloat(run.toFixed(2)));}
     else cum.push(null);
