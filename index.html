@@ -21,7 +21,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--tx);min-h
 .hdr{position:sticky;top:0;z-index:100;background:var(--sur);border-bottom:1px solid var(--bdr);
   padding:0 16px;height:46px;display:flex;align-items:center;justify-content:space-between;gap:10px}
 .logo{display:flex;align-items:center;gap:6px;font-size:15px;font-weight:700;letter-spacing:-.4px;flex-shrink:0;color:var(--acc)}
-.ptabs{display:flex;gap:2px;background:var(--sur2);border-radius:var(--rs);padding:2px}
+.ptabs{display:flex;gap:2px;background:var(--sur2);border-radius:var(--rs);padding:2px;flex-wrap:wrap}
 .ptab{padding:3px 11px;border-radius:5px;border:none;font-family:'DM Sans',sans-serif;font-size:11px;
   font-weight:500;cursor:pointer;background:transparent;color:var(--tx2);transition:all .12s;white-space:nowrap}
 .ptab.on{background:var(--sur3);color:var(--tx);box-shadow:0 1px 3px rgba(0,0,0,.3)}
@@ -71,6 +71,8 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--tx);min-h
 .sub-row{display:flex;gap:4px;flex-wrap:wrap;padding-left:4px;margin-top:2px}
 /* Point 3: wrap ribbon rows instead of scroll */
 .ribbon-row{flex-wrap:wrap!important}
+.sub-row{flex-wrap:wrap!important}
+.mob{flex-wrap:wrap!important;overflow-x:visible!important}
 
 /* PANELS */
 .panels{display:grid;grid-template-columns:2fr 1fr 1.2fr;gap:8px}
@@ -135,7 +137,7 @@ tr.tr:hover td{background:var(--sur2);cursor:pointer}
   .ptabs{display:none}
   .mob{display:flex!important}
 }
-.mob{display:none;overflow-x:auto;gap:4px;padding-bottom:4px;margin-bottom:10px}
+.mob{display:none;gap:4px;padding-bottom:4px;margin-bottom:10px;flex-wrap:wrap}
 .mob .ptab{white-space:nowrap;background:var(--sur);border:1px solid var(--bdr);border-radius:20px;padding:4px 12px}
 .mob .ptab.on{background:var(--acc2);color:#fff;border-color:var(--acc2)}
 </style>
@@ -158,8 +160,8 @@ tr.tr:hover td{background:var(--sur2);cursor:pointer}
 <header class="hdr">
   <div class="logo">🐥 Cashito</div>
   <div class="ptabs" id="ptabs">
-    <button class="ptab on" data-p="week">Esta semana</button>
-    <button class="ptab" data-p="month">Este mes</button>
+    <button class="ptab" data-p="week">Esta semana</button>
+    <button class="ptab on" data-p="month">Este mes</button>
     <button class="ptab" data-p="last_month">Mes anterior</button>
     <button class="ptab" data-p="year">Este año</button>
     <button class="ptab" data-p="custom">Custom</button>
@@ -177,8 +179,8 @@ tr.tr:hover td{background:var(--sur2);cursor:pointer}
 
 <main class="main">
   <div class="mob" id="mob">
-    <button class="ptab on" data-p="week">Esta semana</button>
-    <button class="ptab" data-p="month">Este mes</button>
+    <button class="ptab" data-p="week">Esta semana</button>
+    <button class="ptab on" data-p="month">Este mes</button>
     <button class="ptab" data-p="last_month">Mes anterior</button>
     <button class="ptab" data-p="year">Este año</button>
     <button class="ptab" data-p="custom">Custom</button>
@@ -208,7 +210,7 @@ tr.tr:hover td{background:var(--sur2);cursor:pointer}
 <script>
 var SB_URL = localStorage.getItem('c_url')||'';
 var SB_KEY = localStorage.getItem('c_key')||'';
-var period = 'week';
+var period = 'month';
 var cFrom = null, cTo = null;
 var allGastos = [], allFijos = [], saldo = null;
 var lineInst = null, donutInst = null;
