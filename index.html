@@ -340,7 +340,7 @@ function loadDemo(){
     {monto:'650',dia_cobro:1,activo:true},{monto:'35',dia_cobro:5,activo:true},
     {monto:'15',dia_cobro:15,activo:true},{monto:'80',dia_cobro:3,activo:true},
   ];
-  saldo = {monto: 2340.50, updated_at: new Date().toISOString()};
+  saldo = [{monto:'1500',descripcion:'Sueldo marzo',fecha:new Date(new Date().getFullYear(),new Date().getMonth(),1).toISOString()},{monto:'200',descripcion:'Freelance',fecha:new Date(new Date().getFullYear(),new Date().getMonth(),15).toISOString()}];
   render();
 }
 function genMonth(y,m,yr){
@@ -395,10 +395,10 @@ function loadAll(){
   Promise.all([
     sbFetch('gastos',{select:'*',fecha:'gte.'+from12,order:'fecha.desc'}),
     sbFetch('gastos_fijos',{select:'*'}),
-    sbFetch('saldo',{select:'*',order:'updated_at.desc',limit:'1'}),
+    sbFetch('ingresos',{select:'*',order:'fecha.desc'}),
   ]).then(function(res){
     allGastos=res[0]; allFijos=res[1];
-    saldo=res[2][0]||null;
+    saldo=res[2]||[];
     render();
   }).catch(function(e){
     console.error(e);
@@ -493,6 +493,25 @@ function renderKPIs(f){
   var vsRel=expected?((total-expected)/expected*100):null;
 
   // Saldo card
+<<<<<<< HEAD
+  // Balance = total ingresos - total gastos - fijos pendientes
+  var fijAct=allFijos.filter(function(x){return x.activo;});
+  var today2=now.getDate();
+  var fijosPend=fijAct.reduce(function(s,x){return s+(x.dia_cobro>=today2?parseFloat(x.monto):0);},0);
+
+  var totalIngresos=(saldo||[]).reduce(function(s,i){return s+parseFloat(i.monto);},0);
+  var totalGastosAll=allGastos.reduce(function(s,g){return s+parseFloat(g.monto);},0);
+  var balance=totalIngresos>0?(totalIngresos-totalGastosAll-fijosPend):null;
+
+  // Proyección fin de mes
+  var daysLeft=Math.max(0,daysTotal-daysElapsed);
+  var dailyRate=total/Math.max(1,daysElapsed);
+  var projGastoRest=dailyRate*daysLeft;
+  var projBalance=balance!==null?(balance-projGastoRest):null;
+
+  var ultimoIngreso=(saldo&&saldo.length)?saldo[0]:null;
+  var updAt=ultimoIngreso?new Date(ultimoIngreso.fecha).toLocaleDateString('es',{day:'2-digit',month:'short'}):'—';
+=======
   var saldoMonto=saldo?parseFloat(saldo.monto):null;
   var updAt=saldo?new Date(saldo.updated_at).toLocaleDateString('es',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'}):'—';
 
@@ -514,6 +533,7 @@ function renderKPIs(f){
   var dailyRate=total/Math.max(1,daysElapsed);
   var projGastoRest=dailyRate*daysLeft;
   var projSaldo=saldoReal!==null?(saldoReal-projGastoRest):null;
+>>>>>>> ea6c0d03c8a7fdd95752d84666fc1001a1638324
 
   document.getElementById('kpiRow').innerHTML=
     '<div class="kpi">'+
@@ -529,12 +549,21 @@ function renderKPIs(f){
     '</div>'+
     '<div class="kpi">'+
       '<div class="kpi-left">'+
+<<<<<<< HEAD
+        '<div class="kpi-lbl">Balance disponible</div>'+
+        '<div class="kpi-val" style="color:'+(balance!==null&&balance<0?'var(--dng)':'var(--acc)')+'">'+(balance!==null?'€'+balance.toFixed(2):'—')+'</div>'+
+        '<div class="kpi-sub">'+(totalIngresos?'Ingresos: €'+totalIngresos.toFixed(2)+' · ':'')+'Último: '+updAt+(projBalance!==null?' · Proyección: €'+projBalance.toFixed(2):'')+'</div>'+
+      '</div>'+
+      '<div class="kpi-right">'+
+        (totalIngresos?'<div class="vs-pill"><span class="vs-lbl">Total gastos</span><span class="vs-val dn">−€'+totalGastosAll.toFixed(2)+'</span></div>':'')+
+=======
         '<div class="kpi-lbl">Saldo disponible</div>'+
         '<div class="kpi-val" style="color:'+(saldoReal!==null&&saldoReal<0?'var(--dng)':'var(--acc)')+'">'+(saldoReal!==null?'€'+saldoReal.toFixed(2):'—')+'</div>'+
         '<div class="kpi-sub">Banco: €'+(saldoMonto!==null?saldoMonto.toFixed(2):'—')+' · Actualizado: '+updAt+(projSaldo!==null?' · Proyección: €'+projSaldo.toFixed(2):'')+'</div>'+
       '</div>'+
       '<div class="kpi-right">'+
         (gastosDesdeTotal?'<div class="vs-pill"><span class="vs-lbl">Gastos desde actualiz.</span><span class="vs-val dn">−€'+gastosDesdeTotal.toFixed(2)+'</span></div>':'')+
+>>>>>>> ea6c0d03c8a7fdd95752d84666fc1001a1638324
         (fijosPend?'<div class="vs-pill"><span class="vs-lbl">Fijos pendientes</span><span class="vs-val dn">−€'+fijosPend.toFixed(2)+'</span></div>':'')+
       '</div>'+
     '</div>';
