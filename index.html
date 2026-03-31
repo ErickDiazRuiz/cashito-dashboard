@@ -125,6 +125,14 @@ tr.tr:hover td{background:var(--sur2);cursor:pointer}
 .bs{width:100%;padding:7px;border-radius:6px;border:1px solid var(--bdr);background:transparent;
   color:var(--tx2);font-family:'DM Sans',sans-serif;font-size:11px;cursor:pointer;margin-top:5px}
 
+.pin-dot{width:14px;height:14px;border-radius:50%;border:2px solid var(--bdr);background:transparent;transition:background .15s}
+.pin-dot.filled{background:var(--acc);border-color:var(--acc)}
+.pin-dot.error{background:var(--dng);border-color:var(--dng)}
+.pin-btn{padding:14px;border-radius:10px;border:1px solid var(--bdr);background:var(--sur2);
+  color:var(--tx);font-family:'DM Mono',monospace;font-size:18px;font-weight:600;
+  cursor:pointer;transition:all .1s;aspect-ratio:1}
+.pin-btn:hover{background:var(--sur3);border-color:var(--acc2)}
+.pin-btn:active{transform:scale(.93)}
 .sw{display:flex;flex-direction:column;align-items:center;justify-content:center;height:120px;gap:8px;color:var(--tx3);font-size:11px}
 .sp{width:20px;height:20px;border:2px solid var(--bdr);border-top-color:var(--acc);border-radius:50%;animation:sp .7s linear infinite}
 @keyframes sp{to{transform:rotate(360deg)}}
@@ -144,16 +152,33 @@ tr.tr:hover td{background:var(--sur2);cursor:pointer}
 </head>
 <body>
 
-<div class="ov" id="cfgOv">
-  <div class="mo">
-    <h2>🐥 Configurar Cashito</h2>
-    <p>Ingresa tus credenciales de Supabase. Se guardan en tu navegador.</p>
-    <label class="fgl">Supabase URL</label>
-    <input class="fgi" id="cfgUrl" placeholder="https://xxxx.supabase.co">
-    <label class="fgl">Anon Key</label>
-    <input class="fgi" id="cfgKey" placeholder="eyJhbGci...">
-    <button class="bp" id="cfgBtn">Conectar</button>
-    <button class="bs" id="demoBtn">Ver demo</button>
+<div class="ov" id="pinOv">
+  <div class="mo" style="max-width:300px;text-align:center">
+    <div style="font-size:48px;margin-bottom:12px">🐥</div>
+    <h2 style="font-size:18px;margin-bottom:4px">Cashito</h2>
+    <p style="margin-bottom:20px">Ingresa tu PIN para continuar</p>
+    <div style="display:flex;gap:8px;justify-content:center;margin-bottom:16px" id="pinDots">
+      <div class="pin-dot" id="d0"></div>
+      <div class="pin-dot" id="d1"></div>
+      <div class="pin-dot" id="d2"></div>
+      <div class="pin-dot" id="d3"></div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;max-width:200px;margin:0 auto">
+      <button class="pin-btn" onclick="pinPress(1)">1</button>
+      <button class="pin-btn" onclick="pinPress(2)">2</button>
+      <button class="pin-btn" onclick="pinPress(3)">3</button>
+      <button class="pin-btn" onclick="pinPress(4)">4</button>
+      <button class="pin-btn" onclick="pinPress(5)">5</button>
+      <button class="pin-btn" onclick="pinPress(6)">6</button>
+      <button class="pin-btn" onclick="pinPress(7)">7</button>
+      <button class="pin-btn" onclick="pinPress(8)">8</button>
+      <button class="pin-btn" onclick="pinPress(9)">9</button>
+      <button class="pin-btn" onclick="pinClear()" style="font-size:16px">⌫</button>
+      <button class="pin-btn" onclick="pinPress(0)">0</button>
+      <button class="pin-btn" style="opacity:0" disabled></button>
+    </div>
+    <div id="pinError" style="color:var(--dng);font-size:11px;margin-top:10px;min-height:16px"></div>
+    <button class="bs" id="demoBtn" style="margin-top:12px">Ver demo</button>
   </div>
 </div>
 
@@ -173,7 +198,6 @@ tr.tr:hover td{background:var(--sur2);cursor:pointer}
       <input type="date" id="dtT">
       <button id="custOk">OK</button>
     </div>
-    <button class="ibtn" id="cfgOpenBtn">⚙️</button>
   </div>
 </header>
 
@@ -227,6 +251,9 @@ var NEED_COLORS = ['#2d6a4f','#40916c','#52b788','#74c69d','#95d5b2','#1b4332'];
 var WANT_COLORS = ['#e76f51','#f4a261','#e9c46a','#f9844a','#f8961e','#e63946'];
 var CAT_COLORS  = ['#52b788','#e76f51','#457b9d','#e9c46a','#9b5de5','#2a9d8f','#f4a261','#a8dadc','#e63946','#74c69d','#264653','#f3722c'];
 
+var PIN = '5167';
+var pinBuffer = '';
+
 document.addEventListener('DOMContentLoaded', function(){
   document.querySelectorAll('.ptab').forEach(function(btn){
     btn.addEventListener('click', function(){setPeriod(this.getAttribute('data-p'));});
@@ -236,15 +263,71 @@ document.addEventListener('DOMContentLoaded', function(){
     cTo   = document.getElementById('dtT').value;
     if(cFrom && cTo) render();
   });
-  document.getElementById('cfgOpenBtn').addEventListener('click', function(){
-    document.getElementById('cfgOv').classList.add('open');
-  });
-  document.getElementById('cfgBtn').addEventListener('click', saveConfig);
   document.getElementById('demoBtn').addEventListener('click', loadDemo);
 
-  if(!SB_URL||!SB_KEY) document.getElementById('cfgOv').classList.add('open');
-  else loadAll();
+  // Keyboard support for PIN
+  document.addEventListener('keydown', function(e){
+    if(!document.getElementById('pinOv').classList.contains('open')) return;
+    if(e.key>='0'&&e.key<='9') pinPress(parseInt(e.key));
+    if(e.key==='Backspace') pinClear();
+  });
+
+  // Check if already authenticated this session
+  if(sessionStorage.getItem('cashito_auth')==='ok' && SB_URL && SB_KEY){
+    loadAll();
+  } else {
+    document.getElementById('pinOv').classList.add('open');
+  }
 });
+
+function pinPress(n){
+  if(pinBuffer.length>=4) return;
+  pinBuffer += n;
+  updatePinDots();
+  if(pinBuffer.length===4) checkPin();
+}
+
+function pinClear(){
+  pinBuffer = pinBuffer.slice(0,-1);
+  updatePinDots();
+  document.getElementById('pinError').textContent='';
+}
+
+function updatePinDots(){
+  for(var i=0;i<4;i++){
+    var d=document.getElementById('d'+i);
+    d.classList.toggle('filled', i<pinBuffer.length);
+    d.classList.remove('error');
+  }
+}
+
+function checkPin(){
+  if(pinBuffer===PIN){
+    sessionStorage.setItem('cashito_auth','ok');
+    document.getElementById('pinOv').classList.remove('open');
+    if(SB_URL&&SB_KEY) loadAll();
+    else {
+      // No creds yet — show config after PIN
+      document.getElementById('pinOv').classList.remove('open');
+      showCfg();
+    }
+  } else {
+    for(var i=0;i<4;i++) document.getElementById('d'+i).classList.add('error');
+    document.getElementById('pinError').textContent='PIN incorrecto';
+    setTimeout(function(){pinBuffer='';updatePinDots();document.getElementById('pinError').textContent='';},800);
+  }
+}
+
+function showCfg(){
+  var url=prompt('Supabase URL:');
+  var key=prompt('Anon Key:');
+  if(url&&key){
+    localStorage.setItem('c_url',url.trim());
+    localStorage.setItem('c_key',key.trim());
+    SB_URL=url.trim(); SB_KEY=key.trim();
+    loadAll();
+  }
+}
 
 function setPeriod(p){
   period = p;
@@ -255,15 +338,7 @@ function setPeriod(p){
   if(p!=='custom'){activeCat=null;activeSub=null;render();}
 }
 
-function saveConfig(){
-  SB_URL = document.getElementById('cfgUrl').value.trim();
-  SB_KEY = document.getElementById('cfgKey').value.trim();
-  if(!SB_URL||!SB_KEY){alert('Completa los dos campos.');return;}
-  localStorage.setItem('c_url',SB_URL);
-  localStorage.setItem('c_key',SB_KEY);
-  document.getElementById('cfgOv').classList.remove('open');
-  loadAll();
-}
+
 
 // ── DEMO ───────────────────────────────────────────────────────────────────
 function loadDemo(){
