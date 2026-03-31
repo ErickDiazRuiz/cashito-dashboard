@@ -584,9 +584,10 @@ function renderLine(f){
     else cum.push(null);
     cur.setDate(cur.getDate()+1);
   }
-  var dwd=Math.max(1,Object.keys(dayMap).length), lastV=0;
+  var daysEl=Math.max(1,cum.filter(function(v){return v!==null;}).length);
+  var lastV=0;
   for(var i=cum.length-1;i>=0;i--){if(cum[i]!==null){lastV=cum[i];break;}}
-  var rate=lastV/dwd, pr=lastV;
+  var rate=lastV/daysEl, pr=lastV;
   var projData=cum.map(function(v){if(v!==null)return v;pr+=rate;return parseFloat(pr.toFixed(2));});
 
   document.getElementById('linLeg').innerHTML=
