@@ -232,8 +232,8 @@ tr.tr:hover td{background:var(--sur2);cursor:pointer}
 </main>
 
 <script>
-var SB_URL = localStorage.getItem('c_url')||'';
-var SB_KEY = localStorage.getItem('c_key')||'';
+var SB_URL = localStorage.getItem('c_url')||'https://wvfzaoxhlzitxwprntbr.supabase.co';
+var SB_KEY = localStorage.getItem('c_key')||'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind2Znphb3hobHppdHh3cHJudGJyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ3MzQ0NTUsImV4cCI6MjA5MDMxMDQ1NX0.5LI_y9gkA2xCxSSNgaaIcuFOowb3uiisajZqvOq3iB0';
 var period = 'month';
 var cFrom = null, cTo = null;
 var allGastos = [], allFijos = [], saldo = null;
@@ -318,16 +318,7 @@ function checkPin(){
   }
 }
 
-function showCfg(){
-  var url=prompt('Supabase URL:');
-  var key=prompt('Anon Key:');
-  if(url&&key){
-    localStorage.setItem('c_url',url.trim());
-    localStorage.setItem('c_key',key.trim());
-    SB_URL=url.trim(); SB_KEY=key.trim();
-    loadAll();
-  }
-}
+function showCfg(){ loadAll(); }
 
 function setPeriod(p){
   period = p;
