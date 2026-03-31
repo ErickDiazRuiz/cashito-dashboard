@@ -451,6 +451,7 @@ function renderKPIs(f){
   var ingresosPeriodo=getFiltered(allIngresos).reduce(function(s,i){return s+parseFloat(i.monto);},0);
   var daysLeft=Math.max(0,daysTotal-daysElapsed);
   var dailyRate=daysElapsed>0?total/daysElapsed:0;
+  var projTotal=total+(dailyRate*daysLeft);  // total acumulado proyectado al fin del período
   var projBalance=balance!==null?(balance-dailyRate*daysLeft):null;
 
   document.getElementById('kpiRow').innerHTML=
@@ -472,7 +473,7 @@ function renderKPIs(f){
         '<div class="kpi-sub">Ingresos período: €'+ingresosPeriodo.toFixed(2)+' · Gastos período: −€'+total.toFixed(2)+'</div>'+
       '</div>'+
       '<div class="kpi-right">'+
-        (dailyRate?'<div class="vs-pill"><span class="vs-lbl">Gasto proy.</span><span class="vs-val dn">−€'+(dailyRate*daysLeft).toFixed(2)+'</span></div>':'')+
+        (dailyRate&&projBalance!==null?'<div class="vs-pill"><span class="vs-lbl">Balance proy.</span><span class="vs-val '+(projBalance<0?'dn':'up')+'">€'+projBalance.toFixed(2)+'</span></div>':'')+
       '</div>'+
     '</div>';
 }
