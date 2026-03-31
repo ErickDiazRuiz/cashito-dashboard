@@ -57,16 +57,20 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--tx);min-h
 .ribbon-row{display:flex;gap:5px;flex-wrap:wrap;align-items:center;margin-bottom:4px}
 .fcat{padding:4px 12px;border-radius:20px;border:1px solid var(--bdr);background:var(--sur);
   font-family:'DM Sans',sans-serif;font-size:11px;font-weight:500;color:var(--tx2);
-  cursor:pointer;transition:all .12s;white-space:nowrap}
-.fcat:hover{border-color:var(--acc2);color:var(--tx)}
+  cursor:pointer;transition:all .12s}
+.fcat:hover:not(.disabled){border-color:var(--acc2);color:var(--tx)}
 .fcat.on{background:var(--acc2);color:#fff;border-color:var(--acc2)}
 .fcat.on-sub{background:var(--sur3);color:var(--acc);border-color:var(--acc2)}
+.fcat.disabled{opacity:.35;cursor:default;pointer-events:none}
 .fsub{padding:3px 10px;border-radius:20px;border:1px solid var(--bdr);background:var(--sur2);
   font-family:'DM Sans',sans-serif;font-size:10px;font-weight:500;color:var(--tx2);
-  cursor:pointer;transition:all .12s;white-space:nowrap}
-.fsub:hover{border-color:var(--acc);color:var(--tx)}
+  cursor:pointer;transition:all .12s}
+.fsub:hover:not(.disabled){border-color:var(--acc);color:var(--tx)}
 .fsub.on{background:var(--acc);color:#fff;border-color:var(--acc)}
+.fsub.disabled{opacity:.35;cursor:default;pointer-events:none}
 .sub-row{display:flex;gap:4px;flex-wrap:wrap;padding-left:4px;margin-top:2px}
+/* Point 3: wrap ribbon rows instead of scroll */
+.ribbon-row{flex-wrap:wrap!important}
 
 /* PANELS */
 .panels{display:grid;grid-template-columns:2fr 1fr 1.2fr;gap:8px}
@@ -154,9 +158,9 @@ tr.tr:hover td{background:var(--sur2);cursor:pointer}
 <header class="hdr">
   <div class="logo">🐥 Cashito</div>
   <div class="ptabs" id="ptabs">
-    <button class="ptab on" data-p="month">Este mes</button>
+    <button class="ptab on" data-p="week">Esta semana</button>
+    <button class="ptab" data-p="month">Este mes</button>
     <button class="ptab" data-p="last_month">Mes anterior</button>
-    <button class="ptab" data-p="week">Esta semana</button>
     <button class="ptab" data-p="year">Este año</button>
     <button class="ptab" data-p="custom">Custom</button>
   </div>
@@ -173,9 +177,9 @@ tr.tr:hover td{background:var(--sur2);cursor:pointer}
 
 <main class="main">
   <div class="mob" id="mob">
-    <button class="ptab on" data-p="month">Este mes</button>
+    <button class="ptab on" data-p="week">Esta semana</button>
+    <button class="ptab" data-p="month">Este mes</button>
     <button class="ptab" data-p="last_month">Mes anterior</button>
-    <button class="ptab" data-p="week">Esta semana</button>
     <button class="ptab" data-p="year">Este año</button>
     <button class="ptab" data-p="custom">Custom</button>
   </div>
@@ -204,7 +208,7 @@ tr.tr:hover td{background:var(--sur2);cursor:pointer}
 <script>
 var SB_URL = localStorage.getItem('c_url')||'';
 var SB_KEY = localStorage.getItem('c_key')||'';
-var period = 'month';
+var period = 'week';
 var cFrom = null, cTo = null;
 var allGastos = [], allFijos = [], saldo = null;
 var lineInst = null, donutInst = null;
@@ -461,16 +465,22 @@ function vsPill(lbl, pct){
 
 // ── RIBBON ─────────────────────────────────────────────────────────────────
 function renderRibbon(f){
-  var cats=[...new Set(f.map(function(g){return g.categoria;}))].sort();
+  // All cats in current period data
+  var activeCats=new Set(f.map(function(g){return g.categoria;}));
+  // All cats ever registered
+  var allCats=[...new Set(allGastos.map(function(g){return g.categoria;}))].sort();
+
   var html='<button class="fcat'+(activeCat===null?' on':'')+'" data-cat="">Todas</button>';
-  cats.forEach(function(c){
+  allCats.forEach(function(c){
+    var hasData=activeCats.has(c);
     var isOn=activeCat===c;
     var hasSub=CATS_WITH_SUBS[c];
-    html+='<button class="fcat'+(isOn?(hasSub?' on-sub':' on'):'')+'" data-cat="'+c.replace(/"/g,'&quot;')+'">'+c+'</button>';
+    var cls='fcat'+(isOn?(hasSub?' on-sub':' on'):'')+(hasData?'':' disabled');
+    html+='<button class="'+cls+'" data-cat="'+c.replace(/"/g,'&quot;')+'"'+(hasData?'':' title="Sin datos en este período"')+'>'+c+'</button>';
   });
   document.getElementById('ribbonCats').innerHTML=html;
 
-  document.querySelectorAll('.fcat').forEach(function(btn){
+  document.querySelectorAll('.fcat:not(.disabled)').forEach(function(btn){
     btn.addEventListener('click',function(){
       var cat=this.dataset.cat||null;
       if(activeCat===cat){activeCat=null;activeSub=null;}
@@ -484,13 +494,17 @@ function renderRibbon(f){
   var subRow=document.getElementById('ribbonSubs');
   if(activeCat && CATS_WITH_SUBS[activeCat]){
     var subs=CATS_WITH_SUBS[activeCat];
+    // Active subcats in current data
+    var activeSubs=new Set(f.filter(function(g){return g.categoria===activeCat;}).map(function(g){return g.subcategoria;}));
     var shtml='';
     subs.forEach(function(s){
-      shtml+='<button class="fsub'+(activeSub===s?' on':'')+'" data-sub="'+s+'">'+s+'</button>';
+      var hasSubData=activeSubs.has(s);
+      var cls='fsub'+(activeSub===s?' on':'')+(hasSubData?'':' disabled');
+      shtml+='<button class="'+cls+'" data-sub="'+s+'"'+(hasSubData?'':' title="Sin datos"')+'>'+s+'</button>';
     });
     subRow.innerHTML=shtml;
     subRow.style.display='flex';
-    document.querySelectorAll('.fsub').forEach(function(btn){
+    document.querySelectorAll('.fsub:not(.disabled)').forEach(function(btn){
       btn.addEventListener('click',function(){
         var sub=this.dataset.sub;
         activeSub=activeSub===sub?null:sub;
