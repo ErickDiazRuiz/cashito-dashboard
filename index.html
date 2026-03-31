@@ -432,8 +432,8 @@ function renderKPIs(f){
   var total=f.reduce(function(s,g){return s+parseFloat(g.monto);},0);
   var prev=getPrev(); var prevTotal=prev.reduce(function(s,g){return s+parseFloat(g.monto);},0);
   var r=getRange(), now=new Date();
-  var daysElapsed=Math.max(1,Math.round((Math.min(now,r.to)-r.from)/86400000)+1);
-  var daysTotal=Math.round((r.to-r.from)/86400000)+1;
+  var daysElapsed=Math.max(1,Math.floor((Math.min(now,r.to)-r.from)/86400000)+1);
+  var daysTotal=Math.floor((r.to-r.from)/86400000)+1;
   var prevDays=Math.round((r.prevTo-r.prevFrom)/86400000)+1;
   var vsAbs=prevTotal>0?((total-prevTotal)/prevTotal*100):null;
   var expected=prevTotal>0?(prevTotal/prevDays)*daysElapsed:null;
@@ -593,7 +593,7 @@ function renderLine(f){
     cur.setDate(cur.getDate()+1);
   }
   // Use same daysElapsed formula as KPI card for consistent projection
-  var chartDaysElapsed=Math.max(1,Math.round((Math.min(now,r.to)-r.from)/86400000)+1);
+  var chartDaysElapsed=Math.max(1,Math.floor((Math.min(now,r.to)-r.from)/86400000)+1);
   var lastV=0;
   for(var i=cum.length-1;i>=0;i--){if(cum[i]!==null){lastV=cum[i];break;}}
   var rate=lastV/chartDaysElapsed, pr=lastV;
