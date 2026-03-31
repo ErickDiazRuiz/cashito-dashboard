@@ -217,6 +217,12 @@ var lineInst = null, donutInst = null;
 var activeCat = null, activeSub = null;
 
 var CATS_WITH_SUBS = {'🍔 Alimentación': ['Supermercado','Restaurante','Delivery','Café/Bar']};
+// All possible categories (fixed list, always shown in ribbon)
+var ALL_CATS = [
+  '🍔 Alimentación','🚗 Transporte','🏠 Hogar','💊 Salud',
+  '🎓 Educación','🎮 Ocio','👔 Ropa y moda','💻 Tecnología',
+  '✈️ Viajes','🎁 Regalos/Social','💰 Finanzas','📦 Otros'
+];
 var NEED_COLORS = ['#2d6a4f','#40916c','#52b788','#74c69d','#95d5b2','#1b4332'];
 var WANT_COLORS = ['#e76f51','#f4a261','#e9c46a','#f9844a','#f8961e','#e63946'];
 var CAT_COLORS  = ['#52b788','#e76f51','#457b9d','#e9c46a','#9b5de5','#2a9d8f','#f4a261','#a8dadc','#e63946','#74c69d','#264653','#f3722c'];
@@ -470,7 +476,7 @@ function renderRibbon(f){
   // All cats in current period data
   var activeCats=new Set(f.map(function(g){return g.categoria;}));
   // All cats ever registered
-  var allCats=[...new Set(allGastos.map(function(g){return g.categoria;}))].sort();
+  var allCats=ALL_CATS;
 
   var html='<button class="fcat'+(activeCat===null?' on':'')+'" data-cat="">Todas</button>';
   allCats.forEach(function(c){
