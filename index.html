@@ -445,8 +445,8 @@ function renderKPIs(f){
   var vsAbs=prevTotal>0?((total-prevTotal)/prevTotal*100):null;
   var expected=prevTotal>0?(prevTotal/prevDays)*daysElapsed:null;
   var vsRel=expected?((total-expected)/expected*100):null;
-  var vsAbsLabel=period==="week"?"vs semana anterior":period==="month"?"vs mes anterior":period==="year"?"vs año anterior":"vs período anterior";
-  var vsRelLabel="vs ritmo esperado";
+  var vsAbsLabel=period==="week"?"respecto a semana pasada":period==="month"?"respecto al mes pasado":period==="year"?"respecto al año pasado":"respecto al período anterior";
+  var vsRelLabel=period==="week"?"Ritmo esta semana":period==="month"?"Ritmo este mes":"Ritmo actual";
 
   // Balance — always historical total, independent of period
   var totalIngresosAll=allIngresos.reduce(function(s,i){return s+parseFloat(i.monto);},0);
@@ -482,8 +482,8 @@ function renderKPIs(f){
         '<div class="kpi-sub">Ingresos período: €'+ingresosPeriodo.toFixed(2)+' · Gastos período: −€'+total.toFixed(2)+'</div>'+
       '</div>'+
       '<div class="kpi-right">'+
-        (fijosPend?'<div class="vs-pill"><span class="vs-lbl">Fijos pend.</span><span class="vs-val nu">€'+fijosPend.toFixed(2)+'</span></div>':'')+
-        (dailyRate&&projBalance!==null?'<div class="vs-pill"><span class="vs-lbl">Balance proy.</span><span class="vs-val '+(projBalance<0?'dn':'up')+'">€'+projBalance.toFixed(2)+'</span></div>':'')+
+        (fijosPend?'<div class="vs-pill"><span class="vs-lbl">Fijos por cobrar</span><span class="vs-val nu">−€'+fijosPend.toFixed(2)+'</span></div>':'')+
+        (dailyRate&&projBalance!==null?'<div class="vs-pill"><span class="vs-lbl">Saldo al cierre</span><span class="vs-val '+(projBalance<0?'dn':'up')+'">€'+projBalance.toFixed(2)+'</span></div>':'')+
       '</div>'+
     '</div>';
 }
