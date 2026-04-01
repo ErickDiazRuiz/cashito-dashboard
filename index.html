@@ -445,14 +445,14 @@ function renderKPIs(f){
   var today=now.getDate();
   var fijAct=allFijos.filter(function(x){return x.activo;});
   var fijosPend=fijAct.reduce(function(s,x){return s+(x.dia_cobro>=today?parseFloat(x.monto):0);},0);
-  var balance=totalIngresosAll>0?(totalIngresosAll-totalGastosAll-fijosPend):null;
+  var balance=totalIngresosAll>0?(totalIngresosAll-totalGastosAll):null;  // Real: no incluye fijos pendientes
 
   // Period-specific context for balance card
   var ingresosPeriodo=getFiltered(allIngresos).reduce(function(s,i){return s+parseFloat(i.monto);},0);
   var daysLeft=Math.max(0,daysTotal-daysElapsed);
   var dailyRate=daysElapsed>0?total/daysElapsed:0;
   var projTotal=total+(dailyRate*daysLeft);  // total acumulado proyectado al fin del período
-  var projBalance=balance!==null?(balance-dailyRate*daysLeft):null;
+  var projBalance=balance!==null?(balance-fijosPend-dailyRate*daysLeft):null;  // Proyección sí resta fijos
 
   document.getElementById('kpiRow').innerHTML=
     '<div class="kpi">'+
@@ -473,6 +473,7 @@ function renderKPIs(f){
         '<div class="kpi-sub">Ingresos período: €'+ingresosPeriodo.toFixed(2)+' · Gastos período: −€'+total.toFixed(2)+'</div>'+
       '</div>'+
       '<div class="kpi-right">'+
+        (fijosPend?'<div class="vs-pill"><span class="vs-lbl">Fijos pend.</span><span class="vs-val nu">€'+fijosPend.toFixed(2)+'</span></div>':'')+
         (dailyRate&&projBalance!==null?'<div class="vs-pill"><span class="vs-lbl">Balance proy.</span><span class="vs-val '+(projBalance<0?'dn':'up')+'">€'+projBalance.toFixed(2)+'</span></div>':'')+
       '</div>'+
     '</div>';
