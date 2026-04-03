@@ -443,6 +443,10 @@ function render(){
   renderRibbon(f);
   renderPanels(f);
   renderFijosStrip(f);
+  // Fijos just expanded the grid — give browser one tick then resize chart
+  setTimeout(function(){
+    if(lineInst) lineInst.resize();
+  }, 0);
 }
 
 // ── KPIs ───────────────────────────────────────────────────────────────────
