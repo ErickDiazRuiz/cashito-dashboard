@@ -17,7 +17,7 @@
 *{box-sizing:border-box;margin:0;padding:0}
 
 /* ── VIEWPORT BASE ──────────────────────────────────────────── */
-body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--tx);font-size:13px}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--tx);font-size:13px;overflow:hidden}
 
 /* ── HEADER ─────────────────────────────────────────────────── */
 .hdr{position:sticky;top:0;z-index:100;background:var(--sur);border-bottom:1px solid var(--bdr);
@@ -34,23 +34,28 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--tx);font-
 .cust button{padding:3px 8px;border-radius:5px;border:none;background:var(--acc2);color:#fff;
   font-size:11px;font-weight:600;cursor:pointer}
 
-/* ── MAIN: content-driven, page scrolls if needed ──────────── */
+/* ── MAIN: viewport height, no scroll ──────────────────────── */
 .main{
+  height:calc(100vh - 46px);
+  display:flex;
+  flex-direction:column;
   padding:12px;
   gap:8px;
+  overflow:hidden;
   max-width:1600px;
   margin:0 auto;
 }
-.plbl{font-size:9px;color:var(--tx3);text-transform:uppercase;letter-spacing:.8px;font-weight:600;margin-bottom:4px}
+.plbl{font-size:9px;color:var(--tx3);text-transform:uppercase;letter-spacing:.8px;font-weight:600;flex-shrink:0}
 .err-box{background:#3b0f0f;border:1px solid #7f1d1d;border-radius:var(--rs);padding:10px;
-  color:#fc8181;font-size:11px;margin-bottom:6px}
+  color:#fc8181;font-size:11px;flex-shrink:0}
 
-/* ── PAGE GRID: 2 columns ───────────────────────────────────── */
+/* ── PAGE GRID: 2 columns, fills main ──────────────────────── */
 .page-grid{
+  flex:1;
   display:grid;
   grid-template-columns:1fr 300px;
   gap:8px;
-  align-items:start;
+  min-height:0;
 }
 
 /* ── LEFT COLUMN ────────────────────────────────────────────── */
@@ -58,6 +63,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--tx);font-
   display:flex;
   flex-direction:column;
   gap:8px;
+  min-height:0;
 }
 
 /* KPI row: fixed height, does not grow */
@@ -91,23 +97,25 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--tx);font-
 
 /* Panels: fills remaining space in left column */
 .panels{
+  flex:1;
   display:grid;
   grid-template-columns:2fr 1fr;
   gap:8px;
-  align-items:start;
+  align-items:stretch;
+  min-height:0;
 }
 
 /* Line card: fills left panel column */
-.line-card{display:flex;flex-direction:column}
-.line-canvas-wrap{position:relative;height:260px}
+.line-card{display:flex;flex-direction:column;min-height:0}
+.line-canvas-wrap{flex:1;position:relative;min-height:0}
 
 /* Bot-right: stacks donut + fijos */
-.bot-right{display:flex;flex-direction:column;gap:8px}
+.bot-right{display:flex;flex-direction:column;gap:8px;min-height:0}
 #fijosPanelSlot{}
 
 /* ── RIGHT COLUMN: transactions full height ─────────────────── */
-.page-right{position:sticky;top:58px;max-height:calc(100vh - 70px)}
-.tx-full{display:flex;flex-direction:column;height:100%}
+.page-right{display:flex;flex-direction:column;min-height:0}
+.tx-full{flex:1;display:flex;flex-direction:column;min-height:0}
 .tx-full .tw{flex:1;overflow-y:auto;min-height:0}
 
 /* ── CARD BASE ───────────────────────────────────────────────── */
@@ -176,12 +184,15 @@ tr.tr:hover td{background:var(--sur2);cursor:pointer}
   .page-grid{grid-template-columns:1fr 260px}
 }
 @media(max-width:800px){
-  .page-grid{grid-template-columns:1fr}
-  .page-right{position:static;max-height:none;height:420px}
-  .panels{grid-template-columns:1fr}
+  body{overflow:auto}
+  .main{height:auto;overflow:visible}
+  .page-grid{grid-template-columns:1fr;flex:none}
+  .page-right{height:400px}
+  .tx-full{height:100%}
+  .panels{grid-template-columns:1fr;flex:none;height:auto}
+  .line-canvas-wrap{height:220px;flex:none}
   .ptabs{display:none}
   .mob{display:flex!important}
-  .kpi-row{grid-template-columns:1fr 1fr}
 }
 @media(max-width:500px){
   .kpi-row{grid-template-columns:1fr}
