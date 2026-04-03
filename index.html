@@ -16,10 +16,10 @@
 }
 *{box-sizing:border-box;margin:0;padding:0}
 
-/* ── VIEWPORT BASE ──────────────────────────────────────────── */
-body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--tx);font-size:13px;overflow:hidden}
+/* BASE */
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--tx);font-size:13px}
 
-/* ── HEADER ─────────────────────────────────────────────────── */
+/* HEADER */
 .hdr{position:sticky;top:0;z-index:100;background:var(--sur);border-bottom:1px solid var(--bdr);
   padding:0 16px;height:46px;display:flex;align-items:center;justify-content:space-between;gap:10px}
 .logo{display:flex;align-items:center;gap:6px;font-size:15px;font-weight:700;letter-spacing:-.4px;flex-shrink:0;color:var(--acc)}
@@ -34,40 +34,14 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--tx);font-
 .cust button{padding:3px 8px;border-radius:5px;border:none;background:var(--acc2);color:#fff;
   font-size:11px;font-weight:600;cursor:pointer}
 
-/* ── MAIN: viewport height, no scroll ──────────────────────── */
-.main{
-  height:calc(100vh - 46px);
-  display:flex;
-  flex-direction:column;
-  padding:12px;
-  gap:8px;
-  overflow:hidden;
-  max-width:1600px;
-  margin:0 auto;
-}
-.plbl{font-size:9px;color:var(--tx3);text-transform:uppercase;letter-spacing:.8px;font-weight:600;flex-shrink:0}
+/* MAIN — content defines height, page scrolls if needed */
+.main{padding:12px;max-width:1600px;margin:0 auto}
+.plbl{font-size:9px;color:var(--tx3);text-transform:uppercase;letter-spacing:.8px;font-weight:600;margin-bottom:6px}
 .err-box{background:#3b0f0f;border:1px solid #7f1d1d;border-radius:var(--rs);padding:10px;
-  color:#fc8181;font-size:11px;flex-shrink:0}
+  color:#fc8181;font-size:11px;margin-bottom:8px}
 
-/* ── PAGE GRID: 2 columns, fills main ──────────────────────── */
-.page-grid{
-  flex:1;
-  display:grid;
-  grid-template-columns:1fr 300px;
-  gap:8px;
-  min-height:0;
-}
-
-/* ── LEFT COLUMN ────────────────────────────────────────────── */
-.page-left{
-  display:flex;
-  flex-direction:column;
-  gap:8px;
-  min-height:0;
-}
-
-/* KPI row: fixed height, does not grow */
-.kpi-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;flex-shrink:0}
+/* KPI ROW */
+.kpi-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px}
 .kpi{background:var(--sur);border-radius:var(--r);padding:12px 14px;box-shadow:var(--sh);
   border:1px solid var(--bdr);display:flex;align-items:center;justify-content:space-between;gap:10px}
 .kpi-lbl{font-size:9px;color:var(--tx3);font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
@@ -79,8 +53,8 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--tx);font-
 .vs-val{font-size:11px;font-weight:700;font-family:'DM Mono',monospace}
 .up{color:#52b788}.dn{color:#e63946}.nu{color:var(--tx2)}
 
-/* Ribbon: fixed height, does not grow */
-.ribbon{flex-shrink:0}
+/* RIBBON */
+.ribbon{margin-bottom:8px}
 .ribbon-row{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:3px}
 .sub-row{display:flex;gap:4px;flex-wrap:wrap;padding-left:4px;margin-top:2px}
 .fcat{padding:3px 11px;border-radius:20px;border:1px solid var(--bdr);background:var(--sur);
@@ -95,30 +69,24 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--tx);font-
 .fsub.on{background:var(--acc);color:#fff;border-color:var(--acc)}
 .fsub.dis{opacity:.35;cursor:default;pointer-events:none}
 
-/* Panels: fills remaining space in left column */
-.panels{
-  flex:1;
-  display:grid;
-  grid-template-columns:2fr 1fr;
-  gap:8px;
-  align-items:stretch;
-  min-height:0;
-}
+/* PAGE GRID: left content + right transactions */
+.page-grid{display:grid;grid-template-columns:1fr 300px;gap:8px;align-items:stretch}
 
-/* Line card: fills left panel column */
-.line-card{display:flex;flex-direction:column;min-height:0}
-.line-canvas-wrap{flex:1;position:relative;min-height:0}
+/* LEFT COLUMN */
+.page-left{display:flex;flex-direction:column;gap:8px}
 
-/* Bot-right: stacks donut + fijos */
-.bot-right{display:flex;flex-direction:column;gap:8px;min-height:0}
+/* PANELS: height defined by bot-right content */
+.panels{display:grid;grid-template-columns:2fr 1fr;gap:8px;align-items:stretch}
+
+/* Line card: stretches to match bot-right via grid stretch */
+.line-card{display:flex;flex-direction:column}
+.line-canvas-wrap{flex:1;position:relative;min-height:200px}
+
+/* Bot-right: donut + fijos stacked, defines panels height */
+.bot-right{display:flex;flex-direction:column;gap:8px}
 #fijosPanelSlot{}
 
-/* ── RIGHT COLUMN: transactions full height ─────────────────── */
-.page-right{display:flex;flex-direction:column;min-height:0}
-.tx-full{flex:1;display:flex;flex-direction:column;min-height:0}
-.tx-full .tw{flex:1;overflow-y:auto;min-height:0}
-
-/* ── CARD BASE ───────────────────────────────────────────────── */
+/* CARD BASE */
 .card{background:var(--sur);border-radius:var(--r);padding:13px 15px;box-shadow:var(--sh);border:1px solid var(--bdr)}
 .ch{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:9px}
 .ct{font-size:12px;font-weight:600;letter-spacing:-.2px}
@@ -127,7 +95,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--tx);font-
 .li{display:flex;align-items:center;gap:4px;font-size:10px;color:var(--tx2)}
 .ld{width:6px;height:6px;border-radius:50%;flex-shrink:0}
 
-/* Donut */
+/* DONUT */
 .donut-wrap{position:relative}
 .donut-center{position:absolute;top:50%;left:50%;transform:translate(-50%,-60%);text-align:center;pointer-events:none}
 .donut-center-val{font-size:16px;font-weight:700;font-family:'DM Mono',monospace;letter-spacing:-.5px}
@@ -137,7 +105,12 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--tx);font-
 .tipo-chip-lbl{font-size:9px;color:var(--tx3);margin-bottom:2px}
 .tipo-chip-val{font-size:12px;font-weight:700;font-family:'DM Mono',monospace}
 
-/* Table */
+/* TRANSACTIONS: sticky, scrolls internally, height = page-left height */
+.page-right{position:sticky;top:58px;align-self:start}
+.tx-full{display:flex;flex-direction:column}
+.tx-full .tw{overflow-y:auto}
+
+/* TABLE */
 table{width:100%;border-collapse:collapse}
 th{position:sticky;top:0;background:var(--sur);text-align:left;padding:5px 7px;
   font-size:9px;font-weight:600;color:var(--tx3);text-transform:uppercase;letter-spacing:.4px;border-bottom:1px solid var(--bdr)}
@@ -149,18 +122,15 @@ tr.tr:hover td{background:var(--sur2);cursor:pointer}
 .tp{display:inline-block;padding:1px 4px;border-radius:3px;font-size:9px;font-weight:600}
 .tn{background:#1b4332;color:#95d5b2}.tg{background:#3b2a0f;color:#fcd34d}
 
-/* Fijos table in slot */
-#fijosPanelSlot .card{display:flex;flex-direction:column}
-
-/* Spinners / empty */
+/* SPINNERS */
 .sw{display:flex;flex-direction:column;align-items:center;justify-content:center;
-  height:100%;min-height:80px;gap:8px;color:var(--tx3);font-size:11px}
+  height:120px;gap:8px;color:var(--tx3);font-size:11px}
 .sp{width:20px;height:20px;border:2px solid var(--bdr);border-top-color:var(--acc);
   border-radius:50%;animation:sp .7s linear infinite}
 @keyframes sp{to{transform:rotate(360deg)}}
 .emp{text-align:center;padding:20px;color:var(--tx3);font-size:11px}
 
-/* ── PIN MODAL ───────────────────────────────────────────────── */
+/* PIN */
 .ov{position:fixed;inset:0;background:rgba(0,0,0,.8);display:none;align-items:center;justify-content:center;z-index:300}
 .ov.open{display:flex}
 .mo{background:var(--sur);border-radius:var(--r);padding:28px 24px;width:90%;max-width:300px;
@@ -179,25 +149,18 @@ tr.tr:hover td{background:var(--sur2);cursor:pointer}
 .bs{width:100%;padding:7px;border-radius:6px;border:1px solid var(--bdr);background:transparent;
   color:var(--tx2);font-family:'DM Sans',sans-serif;font-size:11px;cursor:pointer;margin-top:12px}
 
-/* ── MOBILE ──────────────────────────────────────────────────── */
-@media(max-width:1100px){
-  .page-grid{grid-template-columns:1fr 260px}
-}
+/* RESPONSIVE */
+@media(max-width:1100px){.page-grid{grid-template-columns:1fr 260px}}
 @media(max-width:800px){
-  body{overflow:auto}
-  .main{height:auto;overflow:visible}
-  .page-grid{grid-template-columns:1fr;flex:none}
-  .page-right{height:400px}
-  .tx-full{height:100%}
-  .panels{grid-template-columns:1fr;flex:none;height:auto}
-  .line-canvas-wrap{height:220px;flex:none}
+  .page-grid{grid-template-columns:1fr}
+  .page-right{position:static;align-self:auto}
+  .tx-full .tw{max-height:400px}
+  .panels{grid-template-columns:1fr}
   .ptabs{display:none}
   .mob{display:flex!important}
 }
-@media(max-width:500px){
-  .kpi-row{grid-template-columns:1fr}
-}
-.mob{display:none;gap:4px;padding-bottom:4px;flex-wrap:wrap}
+@media(max-width:500px){.kpi-row{grid-template-columns:1fr}}
+.mob{display:none;gap:4px;padding-bottom:4px;flex-wrap:wrap;margin-bottom:8px}
 .mob .ptab{white-space:nowrap;background:var(--sur);border:1px solid var(--bdr);border-radius:20px;padding:4px 12px}
 .mob .ptab.on{background:var(--acc2);color:#fff;border-color:var(--acc2)}
 </style>
@@ -505,6 +468,14 @@ function render(){
   renderRibbon(f);
   renderPanels(f);
   renderFijosStrip(f);
+  // Resize chart after fijos fills bot-right
+  requestAnimationFrame(function(){
+    if(lineInst) lineInst.resize();
+    // Match transactions height to page-left
+    var pl=document.querySelector('.page-left');
+    var tw=document.querySelector('.tx-full .tw');
+    if(pl&&tw) tw.style.maxHeight=(pl.offsetHeight - 48)+'px';
+  });
 }
 
 // ── KPIs ───────────────────────────────────────────────────────────────────
@@ -589,8 +560,8 @@ function renderFijosStrip(f){
       '<td style="padding:7px 0;font-size:12px;font-weight:700;font-family:monospace;color:var(--dng);text-align:right">−€'+parseFloat(fi.monto).toFixed(2)+'</td>'+
     '</tr>';
   }).join('');
-  slot.innerHTML='<div class="card" style="margin-top:8px"><div class="ch"><div><div class="ct">Gastos fijos del período</div><div class="cs">'+relevant.length+' fijos · €'+totalFijos.toFixed(2)+'</div></div></div>'+
-    '<table style="width:100%;border-collapse:collapse">'+rows+'</table></div>';
+  slot.innerHTML='<div class="card"><div class="ch"><div><div class="ct">Gastos fijos del período</div><div class="cs">'+relevant.length+' fijos · €'+totalFijos.toFixed(2)+'</div></div></div>'+
+    '<div style="flex:1;overflow-y:auto"><table style="width:100%;border-collapse:collapse">'+rows+'</table></div></div>';
 }
 
 function pill(lbl,pct){
@@ -621,7 +592,7 @@ function renderRibbon(f){
     btn.addEventListener('click',function(){
       var cat=this.getAttribute('data-cat')||null;
       activeCat=activeCat===cat?null:cat; activeSub=null;
-      renderRibbon(f); renderPanels(applyFilter(f));
+      renderRibbon(f); renderPanels(applyFilter(f)); requestAnimationFrame(function(){ if(lineInst) lineInst.resize(); });
     });
   });
 
@@ -639,7 +610,7 @@ function renderRibbon(f){
       btn.addEventListener('click',function(){
         var sub=this.getAttribute('data-sub');
         activeSub=activeSub===sub?null:sub;
-        renderRibbon(f); renderPanels(applyFilter(f));
+        renderRibbon(f); renderPanels(applyFilter(f)); requestAnimationFrame(function(){ if(lineInst) lineInst.resize(); });
       });
     });
   } else { subRow.innerHTML=''; subRow.style.display='none'; }
