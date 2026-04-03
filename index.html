@@ -433,6 +433,38 @@ function applyFilter(list){
 }
 
 // ── Render ─────────────────────────────────────────────────────────────────
+function syncHeights(){
+  // Wait for full DOM paint then measure and assign heights explicitly
+  setTimeout(function(){
+    // 1. Line chart height = bot-right height
+    var botRight = document.querySelector('.bot-right');
+    var lineCard  = document.querySelector('.line-card');
+    var canvasWrap= document.querySelector('.line-canvas-wrap');
+    if(botRight && lineCard && canvasWrap){
+      var botH  = botRight.offsetHeight;
+      var chEl  = lineCard.querySelector('.ch');
+      var chH   = chEl ? chEl.offsetHeight : 40;
+      // card padding: 14px top + 14px bottom + 10px ch margin-bottom
+      var h = Math.max(160, botH - chH - 38);
+      canvasWrap.style.height = h + 'px';
+      if(lineInst) lineInst.resize();
+    }
+    // 2. Transactions table fills full page-right height
+    var pageLeft = document.querySelector('.page-left');
+    var txCard   = document.querySelector('.tx-full');
+    var txTable  = txCard ? txCard.querySelector('.tw') : null;
+    if(pageLeft && txCard && txTable){
+      var pageH  = pageLeft.offsetHeight;
+      var txChEl = txCard.querySelector('.ch');
+      var txChH  = txChEl ? txChEl.offsetHeight : 40;
+      var tableH = Math.max(200, pageH - txChH - 38);
+      txCard.style.height   = pageH + 'px';
+      txTable.style.height  = tableH + 'px';
+      txTable.style.overflow= 'auto';
+    }
+  }, 80);
+}
+
 function render(){
   if(lineInst){lineInst.destroy();lineInst=null;}
   if(donutInst){donutInst.destroy();donutInst=null;}
@@ -443,21 +475,7 @@ function render(){
   renderRibbon(f);
   renderPanels(f);
   renderFijosStrip(f);
-  // Measure bot-right height and explicitly set line canvas to match
-  requestAnimationFrame(function(){
-    requestAnimationFrame(function(){
-      var botRight = document.querySelector('.bot-right');
-      var lineCard = document.querySelector('.line-card');
-      var canvasWrap = document.querySelector('.line-canvas-wrap');
-      if(botRight && lineCard && canvasWrap){
-        var targetH = botRight.offsetHeight;
-        var headerH = (lineCard.querySelector('.ch')||{offsetHeight:48}).offsetHeight;
-        var h = Math.max(160, targetH - headerH - 28);
-        canvasWrap.style.height = h + 'px';
-        if(lineInst) lineInst.resize();
-      }
-    });
-  });
+  syncHeights();
 }
 
 // ── KPIs ───────────────────────────────────────────────────────────────────
