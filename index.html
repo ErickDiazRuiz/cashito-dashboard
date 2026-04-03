@@ -39,7 +39,11 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--tx);min-h
 .page-right{display:flex;flex-direction:column}
 .tx-full{flex:1;display:flex;flex-direction:column}
 .tx-full .tw{flex:1;overflow-y:auto}
+/* panels: line stretches to match donut+fijos height */
+.panels{display:grid;grid-template-columns:2fr 1fr;gap:8px;align-items:stretch}
 .bot-right{display:flex;flex-direction:column;gap:8px}
+.line-card{display:flex;flex-direction:column}
+.line-canvas-wrap{flex:1;position:relative;min-height:160px}
 .plbl{font-size:9px;color:var(--tx3);text-transform:uppercase;letter-spacing:.8px;font-weight:600;margin-bottom:10px}
 
 /* KPI ROW */
@@ -199,10 +203,12 @@ tr.tr:hover td{background:var(--sur2);cursor:pointer}
   </div>
 
   <div class="panels" id="panels">
-    <div class="card"><div class="sw"><div class="sp"></div></div></div>
-    <div class="card"><div class="sw"><div class="sp"></div></div></div>
+    <div class="card line-card"><div class="sw"><div class="sp"></div></div></div>
+    <div class="bot-right">
+      <div class="card"><div class="sw"><div class="sp"></div></div></div>
+      <div id="fijosPanelSlot"></div>
+    </div>
   </div>
-  <div id="fijosCard"></div>
   </div><!-- end page-left -->
   <div class="page-right">
     <div class="card tx-full">
@@ -493,7 +499,7 @@ function renderKPIs(f){
     '</div>';
 }
 function renderFijosStrip(f){
-  var slot=document.getElementById('fijosCard');
+  var slot=document.getElementById('fijosPanelSlot');
   if(!slot){return;}
   var r=getRange(), now=new Date();
   var act=(allFijos||[]).filter(function(x){return x.activo;});
@@ -583,9 +589,9 @@ function renderPanels(f){
   if(donutInst){donutInst.destroy();donutInst=null;}
   var isSuper=activeSub==='Supermercado';
   document.getElementById('panels').innerHTML=
-    '<div class="card">'+
+    '<div class="card line-card">'+
       '<div class="ch"><div><div class="ct">Evolución del gasto</div><div class="cs" id="linCs">—</div></div><div class="leg" id="linLeg"></div></div>'+
-      '<div style="position:relative;height:240px"><canvas id="lc"></canvas></div>'+
+      '<div class="line-canvas-wrap"><canvas id="lc"></canvas></div>'+
     '</div>'+
     '<div class="bot-right">'+
       '<div class="card">'+
@@ -596,6 +602,7 @@ function renderPanels(f){
           '<div class="donut-center"><div class="donut-center-val" id="dntCtr">—</div><div class="donut-center-lbl">total</div></div>'+
         '</div>'+
       '</div>'+
+      '<div id="fijosPanelSlot"></div>'+
     '</div>';
   renderLine(f);
   renderDonut(f, isSuper);
