@@ -179,15 +179,33 @@ tr.tr:hover td{background:var(--sur2);cursor:pointer}
   color:var(--tx2);font-family:'DM Sans',sans-serif;font-size:11px;cursor:pointer;margin-top:12px}
 
 /* ── MOBILE ──────────────────────────────────────────────────── */
+/* Medium screens: shrink transactions column */
+@media(max-width:1200px) and (min-width:901px){
+  .page-grid{grid-template-columns:1fr 260px}
+  .kpi-val{font-size:19px}
+}
+
+/* Small screens: single column, scrollable */
 @media(max-width:900px){
   body{overflow:auto}
-  .main{height:auto;overflow:visible}
-  .page-grid{grid-template-columns:1fr;flex:none}
-  .page-right{order:2}
-  .tx-full{height:400px}
-  .panels{grid-template-columns:1fr}
+  .main{height:auto;overflow:visible;padding:10px;gap:6px}
+  .page-grid{grid-template-columns:1fr;flex:none;display:flex;flex-direction:column}
+  .page-right{order:3;height:380px;flex-shrink:0}
+  .tx-full{height:100%}
+  .panels{flex:none;grid-template-columns:1fr 1fr;height:420px}
+  .line-card{min-height:0}
+  .bot-right{min-height:0}
+  .kpi-row{grid-template-columns:1fr 1fr}
   .ptabs{display:none}
   .mob{display:flex!important}
+}
+
+/* Very small screens */
+@media(max-width:600px){
+  .panels{grid-template-columns:1fr;height:auto}
+  .line-canvas-wrap{height:200px;flex:none}
+  .kpi-row{grid-template-columns:1fr}
+  .kpi-val{font-size:20px}
 }
 .mob{display:none;gap:4px;padding-bottom:4px;flex-wrap:wrap}
 .mob .ptab{white-space:nowrap;background:var(--sur);border:1px solid var(--bdr);border-radius:20px;padding:4px 12px}
