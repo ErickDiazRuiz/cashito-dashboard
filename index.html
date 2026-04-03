@@ -43,7 +43,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--tx);min-h
 .panels{display:grid;grid-template-columns:2fr 1fr;gap:8px;align-items:stretch}
 .bot-right{display:flex;flex-direction:column;gap:8px}
 .line-card{display:flex;flex-direction:column}
-.line-canvas-wrap{flex:1;position:relative;min-height:160px}
+.line-canvas-wrap{position:relative;min-height:160px}
 .plbl{font-size:9px;color:var(--tx3);text-transform:uppercase;letter-spacing:.8px;font-weight:600;margin-bottom:10px}
 
 /* KPI ROW */
@@ -443,10 +443,21 @@ function render(){
   renderRibbon(f);
   renderPanels(f);
   renderFijosStrip(f);
-  // Fijos just expanded the grid — give browser one tick then resize chart
-  setTimeout(function(){
-    if(lineInst) lineInst.resize();
-  }, 0);
+  // Measure bot-right height and explicitly set line canvas to match
+  requestAnimationFrame(function(){
+    requestAnimationFrame(function(){
+      var botRight = document.querySelector('.bot-right');
+      var lineCard = document.querySelector('.line-card');
+      var canvasWrap = document.querySelector('.line-canvas-wrap');
+      if(botRight && lineCard && canvasWrap){
+        var targetH = botRight.offsetHeight;
+        var headerH = (lineCard.querySelector('.ch')||{offsetHeight:48}).offsetHeight;
+        var h = Math.max(160, targetH - headerH - 28);
+        canvasWrap.style.height = h + 'px';
+        if(lineInst) lineInst.resize();
+      }
+    });
+  });
 }
 
 // ── KPIs ───────────────────────────────────────────────────────────────────
