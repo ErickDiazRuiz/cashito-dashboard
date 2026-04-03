@@ -106,9 +106,9 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--tx);font-
 .tipo-chip-val{font-size:12px;font-weight:700;font-family:'DM Mono',monospace}
 
 /* TRANSACTIONS: sticky, scrolls internally, height = page-left height */
-.page-right{position:sticky;top:58px;align-self:start}
-.tx-full{display:flex;flex-direction:column}
-.tx-full .tw{overflow-y:auto}
+.page-right{align-self:stretch;display:flex;flex-direction:column}
+.tx-full{flex:1;display:flex;flex-direction:column;min-height:0}
+.tx-full .tw{flex:1;overflow-y:auto;min-height:0}
 
 /* TABLE */
 table{width:100%;border-collapse:collapse}
@@ -153,8 +153,8 @@ tr.tr:hover td{background:var(--sur2);cursor:pointer}
 @media(max-width:1100px){.page-grid{grid-template-columns:1fr 260px}}
 @media(max-width:800px){
   .page-grid{grid-template-columns:1fr}
-  .page-right{position:static;align-self:auto}
-  .tx-full .tw{max-height:400px}
+  .page-right{align-self:auto}
+  .tx-full{height:400px}
   .panels{grid-template-columns:1fr}
   .ptabs{display:none}
   .mob{display:flex!important}
@@ -471,10 +471,7 @@ function render(){
   // Resize chart after fijos fills bot-right
   requestAnimationFrame(function(){
     if(lineInst) lineInst.resize();
-    // Match transactions height to page-left
-    var pl=document.querySelector('.page-left');
-    var tw=document.querySelector('.tx-full .tw');
-    if(pl&&tw) tw.style.maxHeight=(pl.offsetHeight - 48)+'px';
+
   });
 }
 
