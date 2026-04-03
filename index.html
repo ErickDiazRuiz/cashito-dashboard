@@ -36,7 +36,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--tx);min-h
 /* Two column page: left content + right transactions */
 .page-grid{display:grid;grid-template-columns:1fr 320px;gap:8px}
 .page-left{display:flex;flex-direction:column;gap:8px;min-width:0}
-.page-right{display:flex;height:100%}
+.page-right{display:flex;flex-direction:column}
 .tx-full{flex:1;display:flex;flex-direction:column}
 .tx-full .tw{flex:1;overflow-y:auto}
 .bot-right{display:flex;flex-direction:column;gap:8px}
@@ -177,8 +177,6 @@ tr.tr:hover td{background:var(--sur2);cursor:pointer}
 </header>
 
 <main class="main">
-  <div class="page-grid">
-  <div class="page-left">
   <div class="mob" id="mob">
     <button class="ptab" data-p="week">Esta semana</button>
     <button class="ptab on" data-p="month">Este mes</button>
@@ -188,7 +186,8 @@ tr.tr:hover td{background:var(--sur2);cursor:pointer}
   </div>
   <div class="plbl" id="plbl">—</div>
   <div id="errBox" style="display:none" class="err-box"></div>
-
+  <div class="page-grid">
+  <div class="page-left">
   <div class="kpi-row" id="kpiRow">
     <div class="kpi"><div class="sw"><div class="sp"></div></div></div>
     <div class="kpi"><div class="sw"><div class="sp"></div></div></div>
@@ -202,8 +201,8 @@ tr.tr:hover td{background:var(--sur2);cursor:pointer}
   <div class="panels" id="panels">
     <div class="card"><div class="sw"><div class="sp"></div></div></div>
     <div class="card"><div class="sw"><div class="sp"></div></div></div>
-    <div class="card"><div class="sw"><div class="sp"></div></div></div>
   </div>
+  <div id="fijosCard"></div>
   </div><!-- end page-left -->
   <div class="page-right">
     <div class="card tx-full">
@@ -435,9 +434,9 @@ function render(){
   document.getElementById('plbl').textContent=getRange().label;
   activeCat=null; activeSub=null;
   renderKPIs(f);
-  renderFijosStrip(f);
   renderRibbon(f);
   renderPanels(f);
+  renderFijosStrip(f);
 }
 
 // ── KPIs ───────────────────────────────────────────────────────────────────
@@ -494,30 +493,38 @@ function renderKPIs(f){
     '</div>';
 }
 function renderFijosStrip(f){
-  // Show fijos that fall within the current period
+  var slot=document.getElementById('fijosCard');
+  if(!slot){return;}
   var r=getRange(), now=new Date();
-  var slot=document.getElementById('fijosPanelSlot');
-  if(!slot) return;
-  if(!allFijos||!allFijos.length){slot.innerHTML='';return;}
-  var act=allFijos.filter(function(x){return x.activo;});
+  var act=(allFijos||[]).filter(function(x){return x.activo;});
   if(!act.length){slot.innerHTML='';return;}
 
-  // Fijos relevant to period: those whose dia_cobro falls within the date range
-  var fromDay=r.from.getDate(), toDay=r.to.getDate();
   var sameMonth=r.from.getMonth()===r.to.getMonth()&&r.from.getFullYear()===r.to.getFullYear();
-  var relevant=act.filter(function(f){
-    if(sameMonth) return f.dia_cobro>=fromDay&&f.dia_cobro<=toDay;
-    return true; // multi-month: show all
+  var fromDay=r.from.getDate(), toDay=r.to.getDate();
+  var relevant=act.filter(function(fi){
+    if(sameMonth) return parseInt(fi.dia_cobro)>=fromDay&&parseInt(fi.dia_cobro)<=toDay;
+    return true;
   });
-  if(!relevant.length){strip.style.display='none';return;}
+  if(!relevant.length){slot.innerHTML='';return;}
 
-  var totalFijos=relevant.reduce(function(s,f){return s+parseFloat(f.monto);},0);
-  sub.textContent=relevant.length+' fijos · €'+totalFijos.toFixed(2)+' en este período';
-
-  var totalFijos=relevant.reduce(function(s,f){return s+parseFloat(f.monto);},0);
-  slot.innerHTML='<div class="card"><div class="ch"><div><div class="ct">Gastos fijos del período</div><div class="cs">'+relevant.length+' fijos · €'+totalFijos.toFixed(2)+'</div></div></div><div id="fijoStripContent"></div></div>';
-  var content2=document.getElementById('fijoStripContent');
-  content2.innerHTML='<table style="width:100%;border-collapse:collapse">'+
+  var totalFijos=relevant.reduce(function(s,fi){return s+parseFloat(fi.monto);},0);
+  var rows=relevant.map(function(fi,i){
+    var isPast=sameMonth&&parseInt(fi.dia_cobro)<now.getDate();
+    var isToday=sameMonth&&parseInt(fi.dia_cobro)===now.getDate();
+    var badgeColor=isPast?'var(--tx3)':isToday?'var(--wrn)':'var(--tx2)';
+    var badge=isPast?'cobrado':isToday?'hoy':'día '+fi.dia_cobro;
+    var border=i>0?'border-top:1px solid var(--bdr)':'';
+    return'<tr style="'+border+'">'+
+      '<td style="padding:7px 0;font-size:12px;font-weight:500">'+fi.nombre+'</td>'+
+      '<td style="padding:7px 0;font-size:11px;color:var(--tx3)">'+fi.categoria+'</td>'+
+      '<td style="padding:7px 0;font-size:11px;color:'+badgeColor+';text-align:center">'+badge+'</td>'+
+      '<td style="padding:7px 0;font-size:12px;font-weight:700;font-family:monospace;color:var(--dng);text-align:right">−€'+parseFloat(fi.monto).toFixed(2)+'</td>'+
+    '</tr>';
+  }).join('');
+  slot.innerHTML='<div class="card" style="margin-top:8px"><div class="ch"><div><div class="ct">Gastos fijos del período</div><div class="cs">'+relevant.length+' fijos · €'+totalFijos.toFixed(2)+'</div></div></div>'+
+    '<table style="width:100%;border-collapse:collapse">'+rows+'</table></div>';
+}
+'<table style="width:100%;border-collapse:collapse">'+
     relevant.map(function(f,i){
       var isPast=sameMonth&&f.dia_cobro<now.getDate();
       var isToday=sameMonth&&f.dia_cobro===now.getDate();
@@ -606,7 +613,6 @@ function renderPanels(f){
           '<div class="donut-center"><div class="donut-center-val" id="dntCtr">—</div><div class="donut-center-lbl">total</div></div>'+
         '</div>'+
       '</div>'+
-      '<div id="fijosPanelSlot"></div>'+
     '</div>';
   renderLine(f);
   renderDonut(f, isSuper);
