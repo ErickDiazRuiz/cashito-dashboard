@@ -70,7 +70,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--tx);font-
 .fsub.dis{opacity:.35;cursor:default;pointer-events:none}
 
 /* PAGE GRID: left content + right transactions */
-.page-grid{display:grid;grid-template-columns:1fr 300px;gap:8px;align-items:stretch}
+.page-grid{display:grid;grid-template-columns:1fr 300px;gap:8px;align-items:start}
 
 /* LEFT COLUMN */
 .page-left{display:flex;flex-direction:column;gap:8px}
@@ -106,9 +106,9 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--tx);font-
 .tipo-chip-val{font-size:12px;font-weight:700;font-family:'DM Mono',monospace}
 
 /* TRANSACTIONS: sticky, scrolls internally, height = page-left height */
-.page-right{align-self:stretch;display:flex;flex-direction:column}
-.tx-full{flex:1;display:flex;flex-direction:column;min-height:0}
-.tx-full .tw{flex:1;overflow-y:auto;min-height:0}
+.page-right{position:sticky;top:58px}
+.tx-full{display:flex;flex-direction:column}
+.tx-full .tw{overflow-y:auto}
 
 /* TABLE */
 table{width:100%;border-collapse:collapse}
@@ -153,7 +153,7 @@ tr.tr:hover td{background:var(--sur2);cursor:pointer}
 @media(max-width:1100px){.page-grid{grid-template-columns:1fr 260px}}
 @media(max-width:800px){
   .page-grid{grid-template-columns:1fr}
-  .page-right{align-self:auto}
+  .page-right{position:static}
   .tx-full{height:400px}
   .panels{grid-template-columns:1fr}
   .ptabs{display:none}
