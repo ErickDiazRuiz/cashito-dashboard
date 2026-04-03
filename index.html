@@ -524,23 +524,6 @@ function renderFijosStrip(f){
   slot.innerHTML='<div class="card" style="margin-top:8px"><div class="ch"><div><div class="ct">Gastos fijos del período</div><div class="cs">'+relevant.length+' fijos · €'+totalFijos.toFixed(2)+'</div></div></div>'+
     '<table style="width:100%;border-collapse:collapse">'+rows+'</table></div>';
 }
-'<table style="width:100%;border-collapse:collapse">'+
-    relevant.map(function(f,i){
-      var isPast=sameMonth&&f.dia_cobro<now.getDate();
-      var isToday=sameMonth&&f.dia_cobro===now.getDate();
-      var badgeColor=isPast?'var(--tx3)':isToday?'var(--wrn)':'var(--tx2)';
-      var badge=isPast?'cobrado':isToday?'hoy':'día '+f.dia_cobro;
-      var border=i>0?'border-top:1px solid var(--bdr)':'';
-      return'<tr style="'+border+'">'+
-        '<td style="padding:7px 0;font-size:12px;font-weight:500">'+f.nombre+'</td>'+
-        '<td style="padding:7px 0;font-size:11px;color:var(--tx3)">'+f.categoria+'</td>'+
-        '<td style="padding:7px 0;font-size:11px;color:'+badgeColor+';text-align:center">'+badge+'</td>'+
-        '<td style="padding:7px 0;font-size:12px;font-weight:700;font-family:monospace;color:var(--dng);text-align:right">−€'+parseFloat(f.monto).toFixed(2)+'</td>'+
-      '</tr>';
-    }).join('')+
-  '</table>';
-
-}
 
 function pill(lbl,pct){
   if(pct===null) return '<div class="vs-pill"><span class="vs-lbl">'+lbl+'</span><span class="vs-val nu">—</span></div>';
