@@ -96,7 +96,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--tx);min-h
 .tipo-chip-val{font-size:12px;font-weight:700;font-family:'DM Mono',monospace}
 
 /* TX */
-.tw{overflow-y:auto;max-height:320px}
+.tw{overflow-y:auto}
 table{width:100%;border-collapse:collapse}
 th{position:sticky;top:0;background:var(--sur);text-align:left;padding:5px 7px;
   font-size:9px;font-weight:600;color:var(--tx3);text-transform:uppercase;letter-spacing:.4px;border-bottom:1px solid var(--bdr)}
@@ -459,8 +459,9 @@ function syncHeights(){
       var txChH  = txChEl ? txChEl.offsetHeight : 40;
       var tableH = Math.max(200, pageH - txChH - 38);
       txCard.style.height   = pageH + 'px';
+      txTable.style.maxHeight= 'none';
       txTable.style.height  = tableH + 'px';
-      txTable.style.overflow= 'auto';
+      txTable.style.overflowY= 'auto';
     }
   }, 80);
 }
