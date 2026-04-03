@@ -32,7 +32,12 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--tx);min-h
 .cust button{padding:3px 8px;border-radius:5px;border:none;background:var(--acc2);color:#fff;font-size:11px;font-weight:600;cursor:pointer}
 
 /* MAIN */
-.main{padding:14px;max-width:1400px;margin:0 auto}
+.main{padding:14px;max-width:1600px;margin:0 auto}
+.page-grid{display:grid;grid-template-columns:1fr 340px;gap:8px;align-items:start}
+.page-left{min-width:0}
+.page-right{position:sticky;top:60px}
+.tx-full{display:flex;flex-direction:column;height:calc(100vh - 74px)}
+.tx-full .tw{flex:1;overflow-y:auto;max-height:none}
 .plbl{font-size:9px;color:var(--tx3);text-transform:uppercase;letter-spacing:.8px;font-weight:600;margin-bottom:10px}
 
 /* KPI ROW */
@@ -65,7 +70,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--tx);min-h
 .fsub.dis{opacity:.35;cursor:default;pointer-events:none}
 
 /* PANELS */
-.panels{display:grid;grid-template-columns:1fr 1.4fr;grid-template-rows:auto auto;gap:8px}
+.panels{display:grid;grid-template-columns:2fr 1fr;gap:8px}
 .card{background:var(--sur);border-radius:var(--r);padding:14px 16px;box-shadow:var(--sh);border:1px solid var(--bdr)}
 .ch{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px}
 .ct{font-size:12px;font-weight:600;letter-spacing:-.2px}
@@ -122,8 +127,8 @@ tr.tr:hover td{background:var(--sur2);cursor:pointer}
 .emp{text-align:center;padding:24px;color:var(--tx3);font-size:11px}
 .err-box{background:#3b0f0f;border:1px solid #7f1d1d;border-radius:var(--rs);padding:12px;color:#fc8181;font-size:11px;margin-bottom:8px}
 
-@media(max-width:1000px){.panels{grid-template-columns:1fr}}
-@media(max-width:700px){.panels{grid-template-columns:1fr}.kpi-row{grid-template-columns:1fr}.ptabs{display:none}.mob{display:flex!important}}
+@media(max-width:1000px){.panels{grid-template-columns:1fr 1fr}}
+@media(max-width:700px){.panels{grid-template-columns:1fr}.kpi-row{grid-template-columns:1fr}.ptabs{display:none}.mob{display:flex!important}.page-grid{grid-template-columns:1fr}.page-right{position:static}.tx-full{height:500px}}
 .mob{display:none;gap:4px;padding-bottom:4px;margin-bottom:10px;flex-wrap:wrap}
 .mob .ptab{white-space:nowrap;background:var(--sur);border:1px solid var(--bdr);border-radius:20px;padding:4px 12px}
 .mob .ptab.on{background:var(--acc2);color:#fff;border-color:var(--acc2)}
@@ -170,6 +175,8 @@ tr.tr:hover td{background:var(--sur2);cursor:pointer}
 </header>
 
 <main class="main">
+  <div class="page-grid">
+  <div class="page-left">
   <div class="mob" id="mob">
     <button class="ptab" data-p="week">Esta semana</button>
     <button class="ptab on" data-p="month">Este mes</button>
@@ -201,6 +208,14 @@ tr.tr:hover td{background:var(--sur2);cursor:pointer}
       <div id="fijoStripContent"></div>
     </div>
   </div>
+  </div><!-- end page-left -->
+  <div class="page-right">
+    <div class="card tx-full">
+      <div class="ch"><div><div class="ct">Transacciones</div><div class="cs" id="txCs">—</div></div></div>
+      <div class="tw"><table><thead><tr><th>Fecha</th><th>Detalle</th><th>€</th></tr></thead><tbody id="txB"></tbody></table></div>
+    </div>
+  </div>
+  </div><!-- end page-grid -->
 </main>
 
 <script>
@@ -581,23 +596,17 @@ function renderPanels(f){
   if(donutInst){donutInst.destroy();donutInst=null;}
   var isSuper=activeSub==='Supermercado';
   document.getElementById('panels').innerHTML=
-    '<div style="display:flex;flex-direction:column;gap:8px">'+
-      '<div class="card">'+
-        '<div class="ch"><div><div class="ct">Evolución del gasto</div><div class="cs" id="linCs">—</div></div><div class="leg" id="linLeg"></div></div>'+
-        '<div style="position:relative;height:210px"><canvas id="lc"></canvas></div>'+
-      '</div>'+
-      '<div class="card">'+
-        '<div class="ch"><div><div class="ct" id="dntTitle">Distribución</div><div class="cs" id="dntCs">—</div></div></div>'+
-        (isSuper?'<div class="tipo-strip"><div class="tipo-chip"><div class="tipo-chip-lbl">🧾 Necesidades</div><div class="tipo-chip-val" id="necV" style="color:var(--acc)">—</div></div><div class="tipo-chip"><div class="tipo-chip-lbl">✨ Gustos</div><div class="tipo-chip-val" id="gusV" style="color:var(--wrn)">—</div></div></div>':'')+
-        '<div class="donut-wrap" style="position:relative;height:'+(isSuper?'140':'185')+'px">'+
-          '<canvas id="dc"></canvas>'+
-          '<div class="donut-center"><div class="donut-center-val" id="dntCtr">—</div><div class="donut-center-lbl">total</div></div>'+
-        '</div>'+
-      '</div>'+
+    '<div class="card">'+
+      '<div class="ch"><div><div class="ct">Evolución del gasto</div><div class="cs" id="linCs">—</div></div><div class="leg" id="linLeg"></div></div>'+
+      '<div style="position:relative;height:210px"><canvas id="lc"></canvas></div>'+
     '</div>'+
-    '<div class="card" style="grid-row:1/3;display:flex;flex-direction:column">'+
-      '<div class="ch"><div><div class="ct">Transacciones</div><div class="cs" id="txCs">—</div></div></div>'+
-      '<div class="tw" style="flex:1;overflow-y:auto"><table><thead><tr><th>Fecha</th><th>Detalle</th><th>€</th></tr></thead><tbody id="txB"></tbody></table></div>'+
+    '<div class="card">'+
+      '<div class="ch"><div><div class="ct" id="dntTitle">Distribución</div><div class="cs" id="dntCs">—</div></div></div>'+
+      (isSuper?'<div class="tipo-strip"><div class="tipo-chip"><div class="tipo-chip-lbl">🧾 Necesidades</div><div class="tipo-chip-val" id="necV" style="color:var(--acc)">—</div></div><div class="tipo-chip"><div class="tipo-chip-lbl">✨ Gustos</div><div class="tipo-chip-val" id="gusV" style="color:var(--wrn)">—</div></div></div>':'')+
+      '<div class="donut-wrap" style="position:relative;height:'+(isSuper?'140':'185')+'px">'+
+        '<canvas id="dc"></canvas>'+
+        '<div class="donut-center"><div class="donut-center-val" id="dntCtr">—</div><div class="donut-center-lbl">total</div></div>'+
+      '</div>'+
     '</div>';
   renderLine(f);
   renderDonut(f, isSuper);
@@ -711,7 +720,7 @@ function renderDonut(f, isSuper){
 // ── Transactions ───────────────────────────────────────────────────────────
 function renderTx(f){
   var sorted=[].concat(f).sort(function(a,b){return new Date(b.fecha)-new Date(a.fecha);});
-  var cs=document.getElementById('txCs'); if(cs) cs.textContent='Últimas '+sorted.length+(activeSub?' · '+activeSub:activeCat?' · '+activeCat:'');
+  var cs=document.getElementById('txCs'); if(cs) cs.textContent=sorted.length+' transacciones'+(activeSub?' · '+activeSub:activeCat?' · '+activeCat:'');
   var tbody=document.getElementById('txB'); if(!tbody) return;
   if(!sorted.length){tbody.innerHTML='<tr><td colspan="3"><div class="emp">Sin transacciones</div></td></tr>';return;}
   tbody.innerHTML=sorted.map(function(g){
