@@ -34,10 +34,13 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--tx);min-h
 /* MAIN */
 .main{padding:14px;max-width:1600px;margin:0 auto}
 .page-grid{display:grid;grid-template-columns:1fr 340px;gap:8px;align-items:start}
-.page-left{min-width:0}
+.page-left{min-width:0;display:flex;flex-direction:column;gap:8px}
 .page-right{position:sticky;top:60px}
 .tx-full{display:flex;flex-direction:column;height:calc(100vh - 74px)}
 .tx-full .tw{flex:1;overflow-y:auto;max-height:none}
+/* Bottom panels layout */
+.bot-panels{display:grid;grid-template-columns:2fr 1fr;gap:8px;align-items:start}
+.bot-right{display:flex;flex-direction:column;gap:8px}
 .plbl{font-size:9px;color:var(--tx3);text-transform:uppercase;letter-spacing:.8px;font-weight:600;margin-bottom:10px}
 
 /* KPI ROW */
@@ -70,7 +73,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--tx);min-h
 .fsub.dis{opacity:.35;cursor:default;pointer-events:none}
 
 /* PANELS */
-.panels{display:grid;grid-template-columns:2fr 1fr;gap:8px}
+.panels{display:grid;grid-template-columns:2fr 1fr;gap:8px;align-items:start}
 .card{background:var(--sur);border-radius:var(--r);padding:14px 16px;box-shadow:var(--sh);border:1px solid var(--bdr)}
 .ch{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px}
 .ct{font-size:12px;font-weight:600;letter-spacing:-.2px}
@@ -201,12 +204,6 @@ tr.tr:hover td{background:var(--sur2);cursor:pointer}
     <div class="card"><div class="sw"><div class="sp"></div></div></div>
     <div class="card"><div class="sw"><div class="sp"></div></div></div>
     <div class="card"><div class="sw"><div class="sp"></div></div></div>
-  </div>
-  <div class="fijos-strip" id="fijoStrip" style="margin-top:8px;display:none">
-    <div class="card">
-      <div class="ch"><div><div class="ct">Gastos fijos del período</div><div class="cs" id="fijoStripSub">—</div></div></div>
-      <div id="fijoStripContent"></div>
-    </div>
   </div>
   </div><!-- end page-left -->
   <div class="page-right">
@@ -500,13 +497,11 @@ function renderKPIs(f){
 function renderFijosStrip(f){
   // Show fijos that fall within the current period
   var r=getRange(), now=new Date();
-  var strip=document.getElementById('fijoStrip');
-  var content2=document.getElementById('fijoStripContent');
-  var sub=document.getElementById('fijoStripSub');
-  if(!allFijos||!allFijos.length){strip.style.display='none';return;}
-
+  var slot=document.getElementById('fijosPanelSlot');
+  if(!slot) return;
+  if(!allFijos||!allFijos.length){slot.innerHTML='';return;}
   var act=allFijos.filter(function(x){return x.activo;});
-  if(!act.length){strip.style.display='none';return;}
+  if(!act.length){slot.innerHTML='';return;}
 
   // Fijos relevant to period: those whose dia_cobro falls within the date range
   var fromDay=r.from.getDate(), toDay=r.to.getDate();
@@ -520,6 +515,9 @@ function renderFijosStrip(f){
   var totalFijos=relevant.reduce(function(s,f){return s+parseFloat(f.monto);},0);
   sub.textContent=relevant.length+' fijos · €'+totalFijos.toFixed(2)+' en este período';
 
+  var totalFijos=relevant.reduce(function(s,f){return s+parseFloat(f.monto);},0);
+  slot.innerHTML='<div class="card"><div class="ch"><div><div class="ct">Gastos fijos del período</div><div class="cs">'+relevant.length+' fijos · €'+totalFijos.toFixed(2)+'</div></div></div><div id="fijoStripContent"></div></div>';
+  var content2=document.getElementById('fijoStripContent');
   content2.innerHTML='<table style="width:100%;border-collapse:collapse">'+
     relevant.map(function(f,i){
       var isPast=sameMonth&&f.dia_cobro<now.getDate();
@@ -535,7 +533,7 @@ function renderFijosStrip(f){
       '</tr>';
     }).join('')+
   '</table>';
-  strip.style.display='block';
+
 }
 
 function pill(lbl,pct){
@@ -598,15 +596,18 @@ function renderPanels(f){
   document.getElementById('panels').innerHTML=
     '<div class="card">'+
       '<div class="ch"><div><div class="ct">Evolución del gasto</div><div class="cs" id="linCs">—</div></div><div class="leg" id="linLeg"></div></div>'+
-      '<div style="position:relative;height:210px"><canvas id="lc"></canvas></div>'+
+      '<div style="position:relative;height:240px"><canvas id="lc"></canvas></div>'+
     '</div>'+
-    '<div class="card">'+
-      '<div class="ch"><div><div class="ct" id="dntTitle">Distribución</div><div class="cs" id="dntCs">—</div></div></div>'+
-      (isSuper?'<div class="tipo-strip"><div class="tipo-chip"><div class="tipo-chip-lbl">🧾 Necesidades</div><div class="tipo-chip-val" id="necV" style="color:var(--acc)">—</div></div><div class="tipo-chip"><div class="tipo-chip-lbl">✨ Gustos</div><div class="tipo-chip-val" id="gusV" style="color:var(--wrn)">—</div></div></div>':'')+
-      '<div class="donut-wrap" style="position:relative;height:'+(isSuper?'140':'185')+'px">'+
-        '<canvas id="dc"></canvas>'+
-        '<div class="donut-center"><div class="donut-center-val" id="dntCtr">—</div><div class="donut-center-lbl">total</div></div>'+
+    '<div class="bot-right">'+
+      '<div class="card">'+
+        '<div class="ch"><div><div class="ct" id="dntTitle">Distribución</div><div class="cs" id="dntCs">—</div></div></div>'+
+        (isSuper?'<div class="tipo-strip"><div class="tipo-chip"><div class="tipo-chip-lbl">🧾 Necesidades</div><div class="tipo-chip-val" id="necV" style="color:var(--acc)">—</div></div><div class="tipo-chip"><div class="tipo-chip-lbl">✨ Gustos</div><div class="tipo-chip-val" id="gusV" style="color:var(--wrn)">—</div></div></div>':'')+
+        '<div class="donut-wrap" style="position:relative;height:'+(isSuper?'140':'185')+'px">'+
+          '<canvas id="dc"></canvas>'+
+          '<div class="donut-center"><div class="donut-center-val" id="dntCtr">—</div><div class="donut-center-lbl">total</div></div>'+
+        '</div>'+
       '</div>'+
+      '<div id="fijosPanelSlot"></div>'+
     '</div>';
   renderLine(f);
   renderDonut(f, isSuper);
