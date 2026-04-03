@@ -34,17 +34,16 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--tx);min-h
 /* MAIN */
 .main{padding:14px;max-width:1600px;margin:0 auto}
 /* Two column page: left content + right transactions */
-.page-grid{display:grid;grid-template-columns:1fr 320px;gap:8px;align-items:stretch}
+.page-grid{display:grid;grid-template-columns:1fr 320px;gap:8px}
 .page-left{display:flex;flex-direction:column;gap:8px;min-width:0}
-.page-right{display:flex;flex-direction:column}
-.tx-full{flex:1;display:flex;flex-direction:column;min-height:0}
+.page-right{display:flex;height:100%}
+.tx-full{flex:1;display:flex;flex-direction:column}
 .tx-full .tw{flex:1;overflow-y:auto}
-/* Bottom panels: line big left, donut+fijos stacked right */
 .bot-right{display:flex;flex-direction:column;gap:8px}
 .plbl{font-size:9px;color:var(--tx3);text-transform:uppercase;letter-spacing:.8px;font-weight:600;margin-bottom:10px}
 
 /* KPI ROW */
-.kpi-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px}
+.kpi-row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .kpi{background:var(--sur);border-radius:var(--r);padding:14px 16px;box-shadow:var(--sh);border:1px solid var(--bdr);
   display:flex;align-items:center;justify-content:space-between;gap:12px}
 .kpi-lbl{font-size:9px;color:var(--tx3);font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
@@ -57,7 +56,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--tx);min-h
 .up{color:#52b788}.dn{color:#e63946}.nu{color:var(--tx2)}
 
 /* FILTER RIBBON */
-.ribbon{margin-bottom:8px}
+.ribbon{}
 .ribbon-row{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:4px}
 .sub-row{display:flex;gap:4px;flex-wrap:wrap;padding-left:4px;margin-top:2px}
 .fcat{padding:4px 12px;border-radius:20px;border:1px solid var(--bdr);background:var(--sur);
@@ -130,8 +129,7 @@ tr.tr:hover td{background:var(--sur2);cursor:pointer}
 .emp{text-align:center;padding:24px;color:var(--tx3);font-size:11px}
 .err-box{background:#3b0f0f;border:1px solid #7f1d1d;border-radius:var(--rs);padding:12px;color:#fc8181;font-size:11px;margin-bottom:8px}
 
-@media(max-width:1000px){.panels{grid-template-columns:1fr 1fr}}
-@media(max-width:1000px){.panels{grid-template-columns:1fr}.page-grid{grid-template-columns:1fr}.page-right{order:2}}
+@media(max-width:1000px){.panels{grid-template-columns:1fr}.page-grid{grid-template-columns:1fr}.page-right{order:2;height:auto}}
 @media(max-width:700px){.kpi-row{grid-template-columns:1fr}.ptabs{display:none}.mob{display:flex!important}}
 .mob{display:none;gap:4px;padding-bottom:4px;margin-bottom:10px;flex-wrap:wrap}
 .mob .ptab{white-space:nowrap;background:var(--sur);border:1px solid var(--bdr);border-radius:20px;padding:4px 12px}
@@ -208,9 +206,9 @@ tr.tr:hover td{background:var(--sur2);cursor:pointer}
   </div>
   </div><!-- end page-left -->
   <div class="page-right">
-    <div class="card tx-full" style="height:100%">
+    <div class="card tx-full">
       <div class="ch" style="flex-shrink:0"><div><div class="ct">Transacciones</div><div class="cs" id="txCs">—</div></div></div>
-      <div class="tw" style="flex:1;overflow-y:auto"><table><thead><tr><th>Fecha</th><th>Detalle</th><th>€</th></tr></thead><tbody id="txB"></tbody></table></div>
+      <div class="tw"><table><thead><tr><th>Fecha</th><th>Detalle</th><th>€</th></tr></thead><tbody id="txB"></tbody></table></div>
     </div>
   </div>
   </div><!-- end page-grid -->
