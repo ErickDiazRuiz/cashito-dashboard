@@ -33,13 +33,13 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--tx);min-h
 
 /* MAIN */
 .main{padding:14px;max-width:1600px;margin:0 auto}
-.page-grid{display:grid;grid-template-columns:1fr 340px;gap:8px;align-items:start}
-.page-left{min-width:0;display:flex;flex-direction:column;gap:8px}
-.page-right{position:sticky;top:60px}
-.tx-full{display:flex;flex-direction:column;height:calc(100vh - 74px)}
-.tx-full .tw{flex:1;overflow-y:auto;max-height:none}
-/* Bottom panels layout */
-.bot-panels{display:grid;grid-template-columns:2fr 1fr;gap:8px;align-items:start}
+/* Two column page: left content + right transactions */
+.page-grid{display:grid;grid-template-columns:1fr 320px;gap:8px;align-items:stretch}
+.page-left{display:flex;flex-direction:column;gap:8px;min-width:0}
+.page-right{display:flex;flex-direction:column}
+.tx-full{flex:1;display:flex;flex-direction:column;min-height:0}
+.tx-full .tw{flex:1;overflow-y:auto}
+/* Bottom panels: line big left, donut+fijos stacked right */
 .bot-right{display:flex;flex-direction:column;gap:8px}
 .plbl{font-size:9px;color:var(--tx3);text-transform:uppercase;letter-spacing:.8px;font-weight:600;margin-bottom:10px}
 
@@ -131,7 +131,8 @@ tr.tr:hover td{background:var(--sur2);cursor:pointer}
 .err-box{background:#3b0f0f;border:1px solid #7f1d1d;border-radius:var(--rs);padding:12px;color:#fc8181;font-size:11px;margin-bottom:8px}
 
 @media(max-width:1000px){.panels{grid-template-columns:1fr 1fr}}
-@media(max-width:700px){.panels{grid-template-columns:1fr}.kpi-row{grid-template-columns:1fr}.ptabs{display:none}.mob{display:flex!important}.page-grid{grid-template-columns:1fr}.page-right{position:static}.tx-full{height:500px}}
+@media(max-width:1000px){.panels{grid-template-columns:1fr}.page-grid{grid-template-columns:1fr}.page-right{order:2}}
+@media(max-width:700px){.kpi-row{grid-template-columns:1fr}.ptabs{display:none}.mob{display:flex!important}}
 .mob{display:none;gap:4px;padding-bottom:4px;margin-bottom:10px;flex-wrap:wrap}
 .mob .ptab{white-space:nowrap;background:var(--sur);border:1px solid var(--bdr);border-radius:20px;padding:4px 12px}
 .mob .ptab.on{background:var(--acc2);color:#fff;border-color:var(--acc2)}
@@ -207,9 +208,9 @@ tr.tr:hover td{background:var(--sur2);cursor:pointer}
   </div>
   </div><!-- end page-left -->
   <div class="page-right">
-    <div class="card tx-full">
-      <div class="ch"><div><div class="ct">Transacciones</div><div class="cs" id="txCs">—</div></div></div>
-      <div class="tw"><table><thead><tr><th>Fecha</th><th>Detalle</th><th>€</th></tr></thead><tbody id="txB"></tbody></table></div>
+    <div class="card tx-full" style="height:100%">
+      <div class="ch" style="flex-shrink:0"><div><div class="ct">Transacciones</div><div class="cs" id="txCs">—</div></div></div>
+      <div class="tw" style="flex:1;overflow-y:auto"><table><thead><tr><th>Fecha</th><th>Detalle</th><th>€</th></tr></thead><tbody id="txB"></tbody></table></div>
     </div>
   </div>
   </div><!-- end page-grid -->
