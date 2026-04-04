@@ -468,10 +468,23 @@ function render(){
   renderRibbon(f);
   renderPanels(f);
   renderFijosStrip(f);
-  // Resize chart after fijos fills bot-right
+  // Resize chart + match tx height to page-left
   requestAnimationFrame(function(){
-    if(lineInst) lineInst.resize();
-
+    requestAnimationFrame(function(){
+      if(lineInst) lineInst.resize();
+      var pl = document.querySelector('.page-left');
+      var txCard = document.querySelector('.page-right .card');
+      var tw = document.querySelector('.tx-full .tw');
+      if(pl && txCard && tw){
+        var h = pl.getBoundingClientRect().height;
+        txCard.style.height = h + 'px';
+        txCard.style.display = 'flex';
+        txCard.style.flexDirection = 'column';
+        tw.style.flex = '1';
+        tw.style.overflowY = 'auto';
+        tw.style.minHeight = '0';
+      }
+    });
   });
 }
 
