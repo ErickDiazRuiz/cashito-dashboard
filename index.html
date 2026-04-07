@@ -602,7 +602,7 @@ function renderRibbon(f){
     btn.addEventListener('click',function(){
       var cat=this.getAttribute('data-cat')||null;
       activeCat=activeCat===cat?null:cat; activeSub=null;
-      renderRibbon(f); renderPanels(applyFilter(f)); requestAnimationFrame(function(){ if(lineInst) lineInst.resize(); });
+      renderRibbon(f); renderPanels(applyFilter(f)); renderFijosStrip(applyFilter(f)); requestAnimationFrame(function(){ if(lineInst) lineInst.resize(); });
     });
   });
 
@@ -620,7 +620,7 @@ function renderRibbon(f){
       btn.addEventListener('click',function(){
         var sub=this.getAttribute('data-sub');
         activeSub=activeSub===sub?null:sub;
-        renderRibbon(f); renderPanels(applyFilter(f)); requestAnimationFrame(function(){ if(lineInst) lineInst.resize(); });
+        renderRibbon(f); renderPanels(applyFilter(f)); renderFijosStrip(applyFilter(f)); requestAnimationFrame(function(){ if(lineInst) lineInst.resize(); });
       });
     });
   } else { subRow.innerHTML=''; subRow.style.display='none'; }
